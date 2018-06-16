@@ -141,7 +141,10 @@
     <MASM Include="4_2_ExchangingPairsofArrayValues.asm">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </MASM>
-    <MASM Include="4_3_SummingtheGapsbetweenArrayValues.asm" />
+    <MASM Include="4_3_SummingtheGapsbetweenArrayValues.asm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </MASM>
+    <MASM Include="4_4_CopyingaWordArraytoaDoubleWordarray.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

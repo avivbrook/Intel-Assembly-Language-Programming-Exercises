@@ -1,10 +1,10 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 14:21:41
-%Summing the Gaps between Array Value			     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 14:40:26
+*Copying a Word Array to a DoubleWord arra		     Page 1 - 1
 
 
-				TITLE Summing the Gaps between Array Values
-				; This program calculates the sum of all the gaps between successive array
-				; elements using a loop and indexed addressing.
+				TITLE Copying a Word Array to a DoubleWord array
+				; This program copies all the elements from an unsigned Word (16-bit)
+				; array into an unsigned doubleword (32-bit) array using a loop.
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -25,59 +25,63 @@ Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 14:21:41
 			      C 
 
  00000000			.DATA
- 00000000 00000000		intArray		DWORD	0,2,5,9,10
-	   00000002
-	   00000005
-	   00000009
-	   0000000A
- 00000014 54 68 69 73 20	introduction	BYTE		"This is the original array:",0
+ 00000000 0100 0200 0300	wordArray		WORD 100h,200h,300h,400h
+	   0400
+ 00000008 54 68 69 73 20	introduction	BYTE "This is the original word array:",0
 	   69 73 20 74 68
 	   65 20 6F 72 69
 	   67 69 6E 61 6C
+	   20 77 6F 72 64
 	   20 61 72 72 61
 	   79 3A 00
- 00000030 54 68 69 73 20	conclusion	BYTE		"This is the sum of the gaps: ",0
+ 00000029 54 68 69 73 20	conclusion	BYTE "This is the doubleword copy:",0
 	   69 73 20 74 68
-	   65 20 73 75 6D
-	   20 6F 66 20 74
-	   68 65 20 67 61
-	   70 73 3A 20 00
+	   65 20 64 6F 75
+	   62 6C 65 77 6F
+	   72 64 20 63 6F
+	   70 79 3A 00
 
  00000000			.DATA?
- 00000000 00000000		sum		DWORD ?
+ 00000000  00000004 [		dWordArray DWORD LENGTHOF wordArray DUP(?)
+	    00000000
+	   ]
 
  00000000			.CODE
  00000000			main PROC
- 00000000  E8 00000000 E		call Clrscr
- 00000005  BA 00000014 R		mov	edx,OFFSET introduction
- 0000000A  E8 00000000 E		call	Writestring
- 0000000F  E8 00000000 E		call	Crlf
- 00000014  BE 00000000 R		mov	esi,OFFSET intArray
- 00000019  B9 00000005			mov	ecx,LENGTHOF intArray
- 0000001E  BB 00000004			mov	ebx,TYPE intArray
- 00000023  E8 00000000 E		call	DumpMem
- 00000028  BE 00000000 R		mov	esi,OFFSET intArray
- 0000002D  B9 00000004			mov	ecx,LENGTHOF intArray - 1
- 00000032			SumGaps:
- 00000032  8B 06			mov	eax,[esi]
- 00000034  83 C6 04			add	esi,TYPE intArray
- 00000037  8B 1E			mov	ebx,[esi]
- 00000039  2B D8			sub	ebx,eax
- 0000003B  01 1D 00000000 R		add	sum,ebx
- 00000041  E2 EF		loop SumGaps
- 00000043  E8 00000000 E		call	Crlf
- 00000048  BA 00000030 R		mov	edx,OFFSET conclusion
- 0000004D  E8 00000000 E		call	Writestring
- 00000052  A1 00000000 R		mov	eax,sum
- 00000057  E8 00000000 E		call Writeint
- 0000005C  E8 00000000 E		call	Crlf
- 00000061  E8 00000000 E		call	Crlf
+ 00000000  E8 00000000 E		call		Clrscr
+ 00000005  BA 00000008 R		mov		edx,OFFSET introduction
+ 0000000A  E8 00000000 E		call		Writestring
+ 0000000F  E8 00000000 E		call		Crlf
+ 00000014  BE 00000000 R		mov		esi,OFFSET wordArray
+ 00000019  B9 00000004			mov		ecx,LENGTHOF wordArray
+ 0000001E  BB 00000002			mov		ebx,TYPE wordArray
+ 00000023  E8 00000000 E		call		DumpMem
+ 00000028  E8 00000000 E		call		Crlf
+
+ 0000002D  BE 00000000			mov		esi,0
+ 00000032  B9 00000004			mov		ecx,LENGTHOF wordArray
+ 00000037			CopyArrayElements:
+ 00000037  0F B7 86			movzx	eax,wordArray[esi]
+	   00000000 R
+ 0000003E  89 04 75			mov		dWordArray[esi * 2],eax
+	   00000000 R
+ 00000045  83 C6 02			add		esi,TYPE wordArray
+ 00000048  E2 ED		loop	CopyArrayElements
+
+ 0000004A  BA 00000029 R		mov		edx,OFFSET conclusion
+ 0000004F  E8 00000000 E		call		Writestring
+ 00000054  E8 00000000 E		call		Crlf
+ 00000059  BE 00000000 R		mov		esi,OFFSET dWordArray
+ 0000005E  B9 00000004			mov		ecx,LENGTHOF dWordArray
+ 00000063  BB 00000004			mov		ebx,TYPE dWordArray
+ 00000068  E8 00000000 E		call		DumpMem
+ 0000006D  E8 00000000 E		call		Crlf
 
 					exit
- 0000006D			main ENDP
+ 00000079			main ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 14:21:41
-%Summing the Gaps between Array Value			     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 14:40:26
+*Copying a Word Array to a DoubleWord arra		     Symbols 2 - 1
 
 
 
@@ -170,9 +174,9 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_BSS . . . . . . . . . . . . . .	32 Bit	 00000004 Para	  Public  'BSS'  
-_DATA  . . . . . . . . . . . . .	32 Bit	 0000004E Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 0000006D Para	  Public  'CODE'	
+_BSS . . . . . . . . . . . . . .	32 Bit	 00000010 Para	  Public  'BSS'  
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000046 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000079 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -279,8 +283,8 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000006D Public STDCALL
-  SumGaps  . . . . . . . . . . .	L Near	 00000032 _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000079 Public STDCALL
+  CopyArrayElements  . . . . . .	L Near	 00000037 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -502,13 +506,13 @@ WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
-conclusion . . . . . . . . . . .	Byte	 00000030 _DATA	
+conclusion . . . . . . . . . . .	Byte	 00000029 _DATA	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
+dWordArray . . . . . . . . . . .	DWord	 00000000 _BSS	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
-intArray . . . . . . . . . . . .	DWord	 00000000 _DATA	
-introduction . . . . . . . . . .	Byte	 00000014 _DATA	
+introduction . . . . . . . . . .	Byte	 00000008 _DATA	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
@@ -517,8 +521,8 @@ lightMagenta . . . . . . . . . .	Number	 0000000Dh
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-sum  . . . . . . . . . . . . . .	DWord	 00000000 _BSS	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
+wordArray  . . . . . . . . . . .	Word	 00000000 _DATA	
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
 
