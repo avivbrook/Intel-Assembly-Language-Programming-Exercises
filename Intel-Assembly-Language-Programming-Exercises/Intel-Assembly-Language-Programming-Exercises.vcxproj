@@ -135,7 +135,10 @@
     <MASM Include="3_2_SymbolicIntegerConstants.asm">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </MASM>
-    <MASM Include="4_1_ConvertingfromBigEndiantoLittleEndian.asm" />
+    <MASM Include="4_1_ConvertingfromBigEndiantoLittleEndian.asm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </MASM>
+    <MASM Include="4_2_ExchangingPairsofArrayValues.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

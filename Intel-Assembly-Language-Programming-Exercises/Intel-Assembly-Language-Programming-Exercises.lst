@@ -1,10 +1,10 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 14:08:25
-+Converting from Big Endian to Little Endia		     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 14:18:51
+ Exchanging Pairs of Array Value			     Page 1 - 1
 
 
-				TITLE Converting from Big Endian to Little Endian
-				; This program copies the value from bigEndian to littleEndian, reversing
-				; the order of the bytes
+				TITLE Exchanging Pairs of Array Values
+				; This program exchanges every pair of values in an array with an even
+				; number of elements using a loop and indexed addressing.
 
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
@@ -26,122 +26,63 @@ Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 14:08:25
 			      C 
 
  00000000			.DATA
-				; The number's 32-bit value is understood to be 12345678 hexadecimal
- 00000000 12 34 56 78		bigEndian	BYTE	12h,34h,56h,78h
-
- 00000000			.DATA?
- 00000000 00000000		littleEndian	DWORD ?
-
- 00000004			.DATA
- 00000004 54 68 65 20 64	bigEndianMem		BYTE	"The data definition:",0Dh,0Ah,0Dh,0Ah
-	   61 74 61 20 64
-	   65 66 69 6E 69
-	   74 69 6F 6E 3A
-	   0D 0A 0D 0A
- 0000001C  09 62 69 67 45					BYTE	"	bigEndian BYTE 12h,34h,56h,78h",0Dh,0Ah,0Dh,0Ah
-	   6E 64 69 61 6E
-	   20 42 59 54 45
-	   20 31 32 68 2C
-	   33 34 68 2C 35
-	   36 68 2C 37 38
-	   68 0D 0A 0D 0A
- 0000003F  69 73 20 73 74					BYTE	"is stored in memory as follows:",0Dh,0Ah,0
-	   6F 72 65 64 20
-	   69 6E 20 6D 65
-	   6D 6F 72 79 20
-	   61 73 20 66 6F
-	   6C 6C 6F 77 73
-	   3A 0D 0A 00
- 00000061 0D 0A			bigEndianDWORD		BYTE	0Dh,0Ah
- 00000063  57 68 65 6E 20					BYTE "When represented as a DWORD, this is its value:"
-	   72 65 70 72 65
-	   73 65 6E 74 65
-	   64 20 61 73 20
-	   61 20 44 57 4F
-	   52 44 2C 20 74
-	   68 69 73 20 69
-	   73 20 69 74 73
-	   20 76 61 6C 75
-	   65 3A
- 00000092  0D 0A 00						BYTE 0Dh,0Ah,0
- 00000095 41 66 74 65 72	littleEndianMem	BYTE "After reversing the order of the bytes, this is how "
-	   20 72 65 76 65
-	   72 73 69 6E 67
-	   20 74 68 65 20
-	   6F 72 64 65 72
-	   20 6F 66 20 74
-	   68 65 20 62 79
-	   74 65 73 2C 20
-	   74 68 69 73 20
-	   69 73 20 68 6F
-	   77 20
- 000000C9  74 68 65 20 6C					BYTE "the littleEndian variable is stored in memory:"
-	   69 74 74 6C 65
-	   45 6E 64 69 61
-	   6E 20 76 61 72
-	   69 61 62 6C 65
-	   20 69 73 20 73
-	   74 6F 72 65 64
-	   20 69 6E 20 6D
-	   65 6D 6F 72 79
-	   3A
- 000000F7  0D 0A 00						BYTE 0Dh,0Ah,0
- 000000FA 0D 0A			littleEndianDWORD	BYTE 0Dh,0Ah
- 000000FC  61 6E 64 20 74					BYTE "and this is its DWORD representation:",0Dh,0Ah,0
-	   68 69 73 20 69
-	   73 20 69 74 73
-	   20 44 57 4F 52
-	   44 20 72 65 70
-	   72 65 73 65 6E
-	   74 61 74 69 6F
-	   6E 3A 0D 0A 00
+ 00000000 00010000		intArray		DWORD 10000h,20000h,30000h,40000h
+	   00020000
+	   00030000
+	   00040000
+ 00000010 54 68 69 73 20	introduction	BYTE "This is the original array:",0
+	   69 73 20 74 68
+	   65 20 6F 72 69
+	   67 69 6E 61 6C
+	   20 61 72 72 61
+	   79 3A 00
+ 0000002C 54 68 69 73 20	conclusion	BYTE "This is the array with swapped elements:",0
+	   69 73 20 74 68
+	   65 20 61 72 72
+	   61 79 20 77 69
+	   74 68 20 73 77
+	   61 70 70 65 64
+	   20 65 6C 65 6D
+	   65 6E 74 73 3A
+	   00
 
  00000000			.CODE
  00000000			main PROC
  00000000  E8 00000000 E		call Clrscr
- 00000005  BA 00000004 R		mov	edx,OFFSET bigEndianMem
+ 00000005  BA 00000010 R		mov	edx,OFFSET introduction
  0000000A  E8 00000000 E		call	Writestring
- 0000000F  BE 00000000 R		mov	esi,OFFSET bigEndian
- 00000014  B9 00000004			mov	ecx,LENGTHOF bigEndian
- 00000019  BB 00000001			mov	ebx,TYPE bigEndian
- 0000001E  E8 00000000 E		call	DumpMem
- 00000023  BA 00000061 R		mov	edx,OFFSET bigEndianDWORD
- 00000028  E8 00000000 E		call	Writestring
- 0000002D  BE 00000000 R		mov	esi,OFFSET bigEndian
- 00000032  B9 00000001			mov	ecx,1
- 00000037  BB 00000004			mov	ebx,TYPE DWORD
- 0000003C  E8 00000000 E		call	DumpMem
+ 0000000F  E8 00000000 E		call Crlf
+ 00000014  BE 00000000 R		mov	esi,OFFSET intArray
+ 00000019  B9 00000004			mov	ecx,LENGTHOF intArray
+ 0000001E  BB 00000004			mov	ebx,TYPE intArray
+ 00000023  E8 00000000 E		call DumpMem
 
- 00000041  A0 00000003 R		mov	al,bigEndian[3]
- 00000046  8A 25 00000002 R		mov	ah,bigEndian[2]
- 0000004C  66| A3			mov	WORD PTR littleEndian,ax
-	   00000000 R
- 00000052  A0 00000001 R		mov	al,bigEndian[1]
- 00000057  8A 25 00000000 R		mov	ah,bigEndian
- 0000005D  66| A3			mov	WORD PTR littleEndian[2],ax
-	   00000002 R
+ 00000028  BF 00000000 R		mov	edi,OFFSET intArray
+ 0000002D  B9 00000002			mov	ecx,LENGTHOF intArray / 2
+ 00000032			SwapElements:
+ 00000032  8B 07			mov	eax,[edi]
+ 00000034  8B 5F 04			mov	ebx,[edi + TYPE intArray]
+ 00000037  89 1F			mov	[edi],ebx
+ 00000039  83 C7 04			add	edi,TYPE intArray
+ 0000003C  89 07			mov	[edi],eax
+ 0000003E  83 C7 04			add	edi,TYPE intArray
+ 00000041  E2 EF		loop SwapElements
 
- 00000063  E8 00000000 E		call Crlf
- 00000068  BA 00000095 R		mov	edx,OFFSET littleEndianMem
- 0000006D  E8 00000000 E		call WriteString
- 00000072  BE 00000000 R		mov	esi,OFFSET littleEndian
- 00000077  B9 00000004			mov	ecx,4
- 0000007C  BB 00000001			mov	ebx,TYPE BYTE
- 00000081  E8 00000000 E		call DumpMem
- 00000086  BA 000000FA R		mov	edx,OFFSET littleEndianDWORD
- 0000008B  E8 00000000 E		call WriteString
- 00000090  BE 00000000 R		mov	esi,OFFSET littleEndian
- 00000095  B9 00000001			mov	ecx,LENGTHOF littleEndian
- 0000009A  BB 00000004			mov	ebx,TYPE littleEndian
- 0000009F  E8 00000000 E		call DumpMem
-
- 000000A4  E8 00000000 E		call Crlf
+ 00000043  E8 00000000 E		call Crlf
+ 00000048  BA 0000002C R		mov	edx,OFFSET conclusion
+ 0000004D  E8 00000000 E		call	Writestring
+ 00000052  E8 00000000 E		call Crlf
+ 00000057  BE 00000000 R		mov	esi,OFFSET intArray
+ 0000005C  B9 00000004			mov	ecx,LENGTHOF intArray
+ 00000061  BB 00000004			mov	ebx,TYPE intArray
+ 00000066  E8 00000000 E		call DumpMem
+ 0000006B  E8 00000000 E		call Crlf
 
 					exit
- 000000B0			main ENDP
+ 00000077			main ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 14:08:25
-+Converting from Big Endian to Little Endia		     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 14:18:51
+ Exchanging Pairs of Array Value			     Symbols 2 - 1
 
 
 
@@ -234,9 +175,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_BSS . . . . . . . . . . . . . .	32 Bit	 00000004 Para	  Public  'BSS'  
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000124 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 000000B0 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000055 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000077 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -343,7 +283,8 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 000000B0 Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000077 Public STDCALL
+  SwapElements . . . . . . . . .	L Near	 00000032 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -562,25 +503,22 @@ VK_UP  . . . . . . . . . . . . .	Number	 00000026h
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
-bigEndianDWORD . . . . . . . . .	Byte	 00000061 _DATA	
-bigEndianMem . . . . . . . . . .	Byte	 00000004 _DATA	
-bigEndian  . . . . . . . . . . .	Byte	 00000000 _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
+conclusion . . . . . . . . . . .	Byte	 0000002C _DATA	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
+intArray . . . . . . . . . . . .	DWord	 00000000 _DATA	
+introduction . . . . . . . . . .	Byte	 00000010 _DATA	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
 lightGreen . . . . . . . . . . .	Number	 0000000Ah   
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
-littleEndianDWORD  . . . . . . .	Byte	 000000FA _DATA	
-littleEndianMem  . . . . . . . .	Byte	 00000095 _DATA	
-littleEndian . . . . . . . . . .	DWord	 00000000 _BSS	
 magenta  . . . . . . . . . . . .	Number	 00000005h   
 red  . . . . . . . . . . . . . .	Number	 00000004h   
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
