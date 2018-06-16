@@ -21,5 +21,8 @@
     <MASM Include="1_IntegerExpressionCalculation.asm">
       <Filter>Source Files\Chapter3</Filter>
     </MASM>
+    <MASM Include="2_SymbolicIntegerConstants.asm">
+      <Filter>Source Files\Chapter3</Filter>
+    </MASM>
   </ItemGroup>
 </Project>
