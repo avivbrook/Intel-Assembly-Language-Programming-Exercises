@@ -1,11 +1,10 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 14:18:51
- Exchanging Pairs of Array Value			     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 14:21:41
+%Summing the Gaps between Array Value			     Page 1 - 1
 
 
-				TITLE Exchanging Pairs of Array Values
-				; This program exchanges every pair of values in an array with an even
-				; number of elements using a loop and indexed addressing.
-
+				TITLE Summing the Gaps between Array Values
+				; This program calculates the sum of all the gaps between successive array
+				; elements using a loop and indexed addressing.
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -26,63 +25,59 @@ Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 14:18:51
 			      C 
 
  00000000			.DATA
- 00000000 00010000		intArray		DWORD 10000h,20000h,30000h,40000h
-	   00020000
-	   00030000
-	   00040000
- 00000010 54 68 69 73 20	introduction	BYTE "This is the original array:",0
+ 00000000 00000000		intArray		DWORD	0,2,5,9,10
+	   00000002
+	   00000005
+	   00000009
+	   0000000A
+ 00000014 54 68 69 73 20	introduction	BYTE		"This is the original array:",0
 	   69 73 20 74 68
 	   65 20 6F 72 69
 	   67 69 6E 61 6C
 	   20 61 72 72 61
 	   79 3A 00
- 0000002C 54 68 69 73 20	conclusion	BYTE "This is the array with swapped elements:",0
+ 00000030 54 68 69 73 20	conclusion	BYTE		"This is the sum of the gaps: ",0
 	   69 73 20 74 68
-	   65 20 61 72 72
-	   61 79 20 77 69
-	   74 68 20 73 77
-	   61 70 70 65 64
-	   20 65 6C 65 6D
-	   65 6E 74 73 3A
-	   00
+	   65 20 73 75 6D
+	   20 6F 66 20 74
+	   68 65 20 67 61
+	   70 73 3A 20 00
+
+ 00000000			.DATA?
+ 00000000 00000000		sum		DWORD ?
 
  00000000			.CODE
  00000000			main PROC
  00000000  E8 00000000 E		call Clrscr
- 00000005  BA 00000010 R		mov	edx,OFFSET introduction
+ 00000005  BA 00000014 R		mov	edx,OFFSET introduction
  0000000A  E8 00000000 E		call	Writestring
- 0000000F  E8 00000000 E		call Crlf
+ 0000000F  E8 00000000 E		call	Crlf
  00000014  BE 00000000 R		mov	esi,OFFSET intArray
- 00000019  B9 00000004			mov	ecx,LENGTHOF intArray
+ 00000019  B9 00000005			mov	ecx,LENGTHOF intArray
  0000001E  BB 00000004			mov	ebx,TYPE intArray
- 00000023  E8 00000000 E		call DumpMem
-
- 00000028  BF 00000000 R		mov	edi,OFFSET intArray
- 0000002D  B9 00000002			mov	ecx,LENGTHOF intArray / 2
- 00000032			SwapElements:
- 00000032  8B 07			mov	eax,[edi]
- 00000034  8B 5F 04			mov	ebx,[edi + TYPE intArray]
- 00000037  89 1F			mov	[edi],ebx
- 00000039  83 C7 04			add	edi,TYPE intArray
- 0000003C  89 07			mov	[edi],eax
- 0000003E  83 C7 04			add	edi,TYPE intArray
- 00000041  E2 EF		loop SwapElements
-
- 00000043  E8 00000000 E		call Crlf
- 00000048  BA 0000002C R		mov	edx,OFFSET conclusion
+ 00000023  E8 00000000 E		call	DumpMem
+ 00000028  BE 00000000 R		mov	esi,OFFSET intArray
+ 0000002D  B9 00000004			mov	ecx,LENGTHOF intArray - 1
+ 00000032			SumGaps:
+ 00000032  8B 06			mov	eax,[esi]
+ 00000034  83 C6 04			add	esi,TYPE intArray
+ 00000037  8B 1E			mov	ebx,[esi]
+ 00000039  2B D8			sub	ebx,eax
+ 0000003B  01 1D 00000000 R		add	sum,ebx
+ 00000041  E2 EF		loop SumGaps
+ 00000043  E8 00000000 E		call	Crlf
+ 00000048  BA 00000030 R		mov	edx,OFFSET conclusion
  0000004D  E8 00000000 E		call	Writestring
- 00000052  E8 00000000 E		call Crlf
- 00000057  BE 00000000 R		mov	esi,OFFSET intArray
- 0000005C  B9 00000004			mov	ecx,LENGTHOF intArray
- 00000061  BB 00000004			mov	ebx,TYPE intArray
- 00000066  E8 00000000 E		call DumpMem
- 0000006B  E8 00000000 E		call Crlf
+ 00000052  A1 00000000 R		mov	eax,sum
+ 00000057  E8 00000000 E		call Writeint
+ 0000005C  E8 00000000 E		call	Crlf
+ 00000061  E8 00000000 E		call	Crlf
 
 					exit
- 00000077			main ENDP
+ 0000006D			main ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 14:18:51
- Exchanging Pairs of Array Value			     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 14:21:41
+%Summing the Gaps between Array Value			     Symbols 2 - 1
 
 
 
@@ -175,8 +170,9 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000055 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000077 Para	  Public  'CODE'	
+_BSS . . . . . . . . . . . . . .	32 Bit	 00000004 Para	  Public  'BSS'  
+_DATA  . . . . . . . . . . . . .	32 Bit	 0000004E Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000006D Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -283,8 +279,8 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000077 Public STDCALL
-  SwapElements . . . . . . . . .	L Near	 00000032 _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000006D Public STDCALL
+  SumGaps  . . . . . . . . . . .	L Near	 00000032 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -506,13 +502,13 @@ WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
-conclusion . . . . . . . . . . .	Byte	 0000002C _DATA	
+conclusion . . . . . . . . . . .	Byte	 00000030 _DATA	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
 intArray . . . . . . . . . . . .	DWord	 00000000 _DATA	
-introduction . . . . . . . . . .	Byte	 00000010 _DATA	
+introduction . . . . . . . . . .	Byte	 00000014 _DATA	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
@@ -521,6 +517,7 @@ lightMagenta . . . . . . . . . .	Number	 0000000Dh
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
 red  . . . . . . . . . . . . . .	Number	 00000004h   
+sum  . . . . . . . . . . . . . .	DWord	 00000000 _BSS	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   

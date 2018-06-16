@@ -33,5 +33,8 @@
     <MASM Include="4_2_ExchangingPairsofArrayValues.asm">
       <Filter>Source Files\Chapter4</Filter>
     </MASM>
+    <MASM Include="4_3_SummingtheGapsbetweenArrayValues.asm">
+      <Filter>Source Files\Chapter4</Filter>
+    </MASM>
   </ItemGroup>
 </Project>
