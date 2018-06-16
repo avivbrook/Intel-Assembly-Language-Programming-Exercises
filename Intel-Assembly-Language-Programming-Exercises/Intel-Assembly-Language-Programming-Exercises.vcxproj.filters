@@ -21,13 +21,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="1_IntegerExpressionCalculation.asm">
+    <MASM Include="3_1_IntegerExpressionCalculation.asm">
       <Filter>Source Files\Chapter3</Filter>
     </MASM>
-    <MASM Include="2_SymbolicIntegerConstants.asm">
+    <MASM Include="3_2_SymbolicIntegerConstants.asm">
       <Filter>Source Files\Chapter3</Filter>
     </MASM>
-    <MASM Include="1_ConvertingfromBigEndiantoLittleEndian.asm">
+    <MASM Include="4_1_ConvertingfromBigEndiantoLittleEndian.asm">
       <Filter>Source Files\Chapter4</Filter>
     </MASM>
   </ItemGroup>

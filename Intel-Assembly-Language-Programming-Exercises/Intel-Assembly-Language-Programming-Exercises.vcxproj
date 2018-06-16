@@ -128,14 +128,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <MASM Include="1_IntegerExpressionCalculation.asm">
+    <MASM Include="3_1_IntegerExpressionCalculation.asm">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <FileType>Document</FileType>
     </MASM>
-    <MASM Include="2_SymbolicIntegerConstants.asm">
+    <MASM Include="3_2_SymbolicIntegerConstants.asm">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </MASM>
-    <MASM Include="1_ConvertingfromBigEndiantoLittleEndian.asm" />
+    <MASM Include="4_1_ConvertingfromBigEndiantoLittleEndian.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
