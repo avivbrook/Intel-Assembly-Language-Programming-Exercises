@@ -144,7 +144,10 @@
     <MASM Include="4_3_SummingtheGapsbetweenArrayValues.asm">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </MASM>
-    <MASM Include="4_4_CopyingaWordArraytoaDoubleWordarray.asm" />
+    <MASM Include="4_4_CopyingaWordArraytoaDoubleWordarray.asm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </MASM>
+    <MASM Include="4_5_FibonacciNumbers.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

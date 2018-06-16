@@ -1,10 +1,11 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 14:40:26
-*Copying a Word Array to a DoubleWord arra		     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 15:09:30
+Fibonacci Number					     Page 1 - 1
 
 
-				TITLE Copying a Word Array to a DoubleWord array
-				; This program copies all the elements from an unsigned Word (16-bit)
-				; array into an unsigned doubleword (32-bit) array using a loop.
+				TITLE Fibonacci Numbers
+				; This program calculates the first seven values of the Fibonacci number
+				; sequence using a loop. The sequence is described by the formula:
+				; Fib(1) = 1, Fib(2) = 1, Fib(n) = Fib(n - 1) + Fib(n - 2)
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -24,64 +25,62 @@ Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 14:40:26
 			      C .LIST
 			      C 
 
+ = 00000007			NUMBER_OF_VALUES = 7
+
  00000000			.DATA
- 00000000 0100 0200 0300	wordArray		WORD 100h,200h,300h,400h
-	   0400
- 00000008 54 68 69 73 20	introduction	BYTE "This is the original word array:",0
-	   69 73 20 74 68
-	   65 20 6F 72 69
-	   67 69 6E 61 6C
-	   20 77 6F 72 64
-	   20 61 72 72 61
-	   79 3A 00
- 00000029 54 68 69 73 20	conclusion	BYTE "This is the doubleword copy:",0
-	   69 73 20 74 68
-	   65 20 64 6F 75
-	   62 6C 65 77 6F
-	   72 64 20 63 6F
-	   70 79 3A 00
+ 00000000 46 69 72 73 74	explanation		BYTE "First ",0
+	   20 00
+ 00000007  20 76 61 6C 75					BYTE " values of the Fibonacci number sequence:",0
+	   65 73 20 6F 66
+	   20 74 68 65 20
+	   46 69 62 6F 6E
+	   61 63 63 69 20
+	   6E 75 6D 62 65
+	   72 20 73 65 71
+	   75 65 6E 63 65
+	   3A 00
 
  00000000			.DATA?
- 00000000  00000004 [		dWordArray DWORD LENGTHOF wordArray DUP(?)
-	    00000000
+ 00000000  00000007 [		fibonacciSequence	BYTE NUMBER_OF_VALUES DUP(?)
+	    00
 	   ]
 
  00000000			.CODE
  00000000			main PROC
- 00000000  E8 00000000 E		call		Clrscr
- 00000005  BA 00000008 R		mov		edx,OFFSET introduction
- 0000000A  E8 00000000 E		call		Writestring
- 0000000F  E8 00000000 E		call		Crlf
- 00000014  BE 00000000 R		mov		esi,OFFSET wordArray
- 00000019  B9 00000004			mov		ecx,LENGTHOF wordArray
- 0000001E  BB 00000002			mov		ebx,TYPE wordArray
- 00000023  E8 00000000 E		call		DumpMem
- 00000028  E8 00000000 E		call		Crlf
+ 00000000  E8 00000000 E		call	Clrscr
 
- 0000002D  BE 00000000			mov		esi,0
- 00000032  B9 00000004			mov		ecx,LENGTHOF wordArray
- 00000037			CopyArrayElements:
- 00000037  0F B7 86			movzx	eax,wordArray[esi]
-	   00000000 R
- 0000003E  89 04 75			mov		dWordArray[esi * 2],eax
-	   00000000 R
- 00000045  83 C6 02			add		esi,TYPE wordArray
- 00000048  E2 ED		loop	CopyArrayElements
+ 00000005  C6 05 00000000 R		mov	fibonacciSequence[0],1
+	   01
+ 0000000C  C6 05 00000001 R		mov	fibonacciSequence[1],1
+	   01
+ 00000013  B9 00000005			mov	ecx,NUMBER_OF_VALUES - 2
+ 00000018  BE 00000002			mov	esi,2
+ 0000001D			CalculateSequence:
+ 0000001D  8A 86 FFFFFFFF R		mov	al,fibonacciSequence[esi - 1]
+ 00000023  02 86 FFFFFFFE R		add	al,fibonacciSequence[esi - 2]
+ 00000029  88 86 00000000 R		mov	fibonacciSequence[esi],al
+ 0000002F  46				inc	esi
+ 00000030  E2 EB		loop CalculateSequence
 
- 0000004A  BA 00000029 R		mov		edx,OFFSET conclusion
- 0000004F  E8 00000000 E		call		Writestring
- 00000054  E8 00000000 E		call		Crlf
- 00000059  BE 00000000 R		mov		esi,OFFSET dWordArray
- 0000005E  B9 00000004			mov		ecx,LENGTHOF dWordArray
- 00000063  BB 00000004			mov		ebx,TYPE dWordArray
- 00000068  E8 00000000 E		call		DumpMem
- 0000006D  E8 00000000 E		call		Crlf
+ 00000032  BA 00000000 R		mov	edx,OFFSET explanation
+ 00000037  E8 00000000 E		call	Writestring
+ 0000003C  B8 00000007			mov	eax,NUMBER_OF_VALUES
+ 00000041  E8 00000000 E		call	Writedec
+ 00000046  BA 00000007 R		mov	edx,OFFSET explanation[7]
+ 0000004B  E8 00000000 E		call	Writestring
+ 00000050  E8 00000000 E		call	Crlf
+
+ 00000055  BE 00000000 R		mov	esi,OFFSET fibonacciSequence
+ 0000005A  B9 00000007			mov	ecx,LENGTHOF fibonacciSequence
+ 0000005F  BB 00000001			mov	ebx,TYPE fibonacciSequence
+ 00000064  E8 00000000 E		call DumpMem
+ 00000069  E8 00000000 E		call	Crlf
 
 					exit
- 00000079			main ENDP
+ 00000075			main ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 14:40:26
-*Copying a Word Array to a DoubleWord arra		     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 15:09:30
+Fibonacci Number					     Symbols 2 - 1
 
 
 
@@ -174,9 +173,9 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_BSS . . . . . . . . . . . . . .	32 Bit	 00000010 Para	  Public  'BSS'  
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000046 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000079 Para	  Public  'CODE'	
+_BSS . . . . . . . . . . . . . .	32 Bit	 00000007 Para	  Public  'BSS'  
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000031 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000075 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -283,8 +282,8 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000079 Public STDCALL
-  CopyArrayElements  . . . . . .	L Near	 00000037 _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000075 Public STDCALL
+  CalculateSequence  . . . . . .	L Near	 0000001D _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -404,6 +403,7 @@ MENU_EVENT . . . . . . . . . . .	Number	 00000008h
 MOUSE_EVENT  . . . . . . . . . .	Number	 00000002h   
 MessageBox . . . . . . . . . . .	Text   	 MessageBoxA
 NULL . . . . . . . . . . . . . .	Number	 00000000h   
+NUMBER_OF_VALUES . . . . . . . .	Number	 00000007h   
 NUMLOCK_ON . . . . . . . . . . .	Number	 00000020h   
 OPEN_ALWAYS  . . . . . . . . . .	Number	 00000004h   
 OPEN_EXISTING  . . . . . . . . .	Number	 00000003h   
@@ -506,13 +506,12 @@ WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
-conclusion . . . . . . . . . . .	Byte	 00000029 _DATA	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
-dWordArray . . . . . . . . . . .	DWord	 00000000 _BSS	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
+explanation  . . . . . . . . . .	Byte	 00000000 _DATA	
+fibonacciSequence  . . . . . . .	Byte	 00000000 _BSS	
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
-introduction . . . . . . . . . .	Byte	 00000008 _DATA	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
@@ -522,7 +521,6 @@ lightRed . . . . . . . . . . . .	Number	 0000000Ch
 magenta  . . . . . . . . . . . .	Number	 00000005h   
 red  . . . . . . . . . . . . . .	Number	 00000004h   
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
-wordArray  . . . . . . . . . . .	Word	 00000000 _DATA	
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
 

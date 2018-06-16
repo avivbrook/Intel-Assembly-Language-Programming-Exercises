@@ -39,5 +39,8 @@
     <MASM Include="4_4_CopyingaWordArraytoaDoubleWordarray.asm">
       <Filter>Source Files\Chapter4</Filter>
     </MASM>
+    <MASM Include="4_5_FibonacciNumbers.asm">
+      <Filter>Source Files\Chapter4</Filter>
+    </MASM>
   </ItemGroup>
 </Project>
