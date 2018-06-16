@@ -16,6 +16,9 @@
     <Filter Include="Source Files\Chapter3">
       <UniqueIdentifier>{9e563c40-0f14-404e-99a9-970c8ee00f8e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Chapter4">
+      <UniqueIdentifier>{aa1b131b-eabe-4284-b37d-49cbba044fe7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="1_IntegerExpressionCalculation.asm">
@@ -23,6 +26,9 @@
     </MASM>
     <MASM Include="2_SymbolicIntegerConstants.asm">
       <Filter>Source Files\Chapter3</Filter>
+    </MASM>
+    <MASM Include="1_ConvertingfromBigEndiantoLittleEndian.asm">
+      <Filter>Source Files\Chapter4</Filter>
     </MASM>
   </ItemGroup>
 </Project>

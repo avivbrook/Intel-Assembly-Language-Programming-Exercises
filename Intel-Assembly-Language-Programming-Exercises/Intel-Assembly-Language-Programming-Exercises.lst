@@ -1,10 +1,10 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 14:04:12
-Symbolic Integer Constant				     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 14:08:25
++Converting from Big Endian to Little Endia		     Page 1 - 1
 
 
-				TITLE Symbolic Integer Constants
-				; This program defines symbolic constants for all seven days of the week
-				; and creates an array variable that uses the symbols as initialisers.
+				TITLE Converting from Big Endian to Little Endian
+				; This program copies the value from bigEndian to littleEndian, reversing
+				; the order of the bytes
 
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
@@ -25,51 +25,123 @@ Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 14:04:12
 			      C .LIST
 			      C 
 
- = "Sunday",0			SUN	EQU	<"Sunday",0>
- = "Monday",0			MON	EQU	<"Monday",0>
- = "Tuesday",0			TUE	EQU	<"Tuesday",0>
- = "Wednesday",0		WED	EQU	<"Wednesday",0>
- = "Thursday",0			THU	EQU	<"Thursday",0>
- = "Friday",0			FRI	EQU	<"Friday",0>
- = "Saturday",0			SAT	EQU	<"Saturday",0>
- = 00000007			NUMBER_OF_DAYS = 7
-
  00000000			.DATA
- 00000000 53 75 6E 64 61	weekdays	BYTE	SUN,MON,TUE,WED,THU,FRI,SAT
-	   79 00 4D 6F 6E
-	   64 61 79 00 54
-	   75 65 73 64 61
-	   79 00 57 65 64
-	   6E 65 73 64 61
-	   79 00 54 68 75
-	   72 73 64 61 79
-	   00 46 72 69 64
-	   61 79 00 53 61
-	   74 75 72 64 61
-	   79 00
+				; The number's 32-bit value is understood to be 12345678 hexadecimal
+ 00000000 12 34 56 78		bigEndian	BYTE	12h,34h,56h,78h
+
+ 00000000			.DATA?
+ 00000000 00000000		littleEndian	DWORD ?
+
+ 00000004			.DATA
+ 00000004 54 68 65 20 64	bigEndianMem		BYTE	"The data definition:",0Dh,0Ah,0Dh,0Ah
+	   61 74 61 20 64
+	   65 66 69 6E 69
+	   74 69 6F 6E 3A
+	   0D 0A 0D 0A
+ 0000001C  09 62 69 67 45					BYTE	"	bigEndian BYTE 12h,34h,56h,78h",0Dh,0Ah,0Dh,0Ah
+	   6E 64 69 61 6E
+	   20 42 59 54 45
+	   20 31 32 68 2C
+	   33 34 68 2C 35
+	   36 68 2C 37 38
+	   68 0D 0A 0D 0A
+ 0000003F  69 73 20 73 74					BYTE	"is stored in memory as follows:",0Dh,0Ah,0
+	   6F 72 65 64 20
+	   69 6E 20 6D 65
+	   6D 6F 72 79 20
+	   61 73 20 66 6F
+	   6C 6C 6F 77 73
+	   3A 0D 0A 00
+ 00000061 0D 0A			bigEndianDWORD		BYTE	0Dh,0Ah
+ 00000063  57 68 65 6E 20					BYTE "When represented as a DWORD, this is its value:"
+	   72 65 70 72 65
+	   73 65 6E 74 65
+	   64 20 61 73 20
+	   61 20 44 57 4F
+	   52 44 2C 20 74
+	   68 69 73 20 69
+	   73 20 69 74 73
+	   20 76 61 6C 75
+	   65 3A
+ 00000092  0D 0A 00						BYTE 0Dh,0Ah,0
+ 00000095 41 66 74 65 72	littleEndianMem	BYTE "After reversing the order of the bytes, this is how "
+	   20 72 65 76 65
+	   72 73 69 6E 67
+	   20 74 68 65 20
+	   6F 72 64 65 72
+	   20 6F 66 20 74
+	   68 65 20 62 79
+	   74 65 73 2C 20
+	   74 68 69 73 20
+	   69 73 20 68 6F
+	   77 20
+ 000000C9  74 68 65 20 6C					BYTE "the littleEndian variable is stored in memory:"
+	   69 74 74 6C 65
+	   45 6E 64 69 61
+	   6E 20 76 61 72
+	   69 61 62 6C 65
+	   20 69 73 20 73
+	   74 6F 72 65 64
+	   20 69 6E 20 6D
+	   65 6D 6F 72 79
+	   3A
+ 000000F7  0D 0A 00						BYTE 0Dh,0Ah,0
+ 000000FA 0D 0A			littleEndianDWORD	BYTE 0Dh,0Ah
+ 000000FC  61 6E 64 20 74					BYTE "and this is its DWORD representation:",0Dh,0Ah,0
+	   68 69 73 20 69
+	   73 20 69 74 73
+	   20 44 57 4F 52
+	   44 20 72 65 70
+	   72 65 73 65 6E
+	   74 61 74 69 6F
+	   6E 3A 0D 0A 00
 
  00000000			.CODE
  00000000			main PROC
  00000000  E8 00000000 E		call Clrscr
- 00000005  BF 00000000 R		mov	edi,OFFSET weekdays
- 0000000A  B9 00000007			mov	ecx,NUMBER_OF_DAYS
+ 00000005  BA 00000004 R		mov	edx,OFFSET bigEndianMem
+ 0000000A  E8 00000000 E		call	Writestring
+ 0000000F  BE 00000000 R		mov	esi,OFFSET bigEndian
+ 00000014  B9 00000004			mov	ecx,LENGTHOF bigEndian
+ 00000019  BB 00000001			mov	ebx,TYPE bigEndian
+ 0000001E  E8 00000000 E		call	DumpMem
+ 00000023  BA 00000061 R		mov	edx,OFFSET bigEndianDWORD
+ 00000028  E8 00000000 E		call	Writestring
+ 0000002D  BE 00000000 R		mov	esi,OFFSET bigEndian
+ 00000032  B9 00000001			mov	ecx,1
+ 00000037  BB 00000004			mov	ebx,TYPE DWORD
+ 0000003C  E8 00000000 E		call	DumpMem
 
- 0000000F			PrintDay:
- 0000000F  8B D7			mov	edx,edi
- 00000011  E8 00000000 E		call Writestring
- 00000016  E8 00000000 E		call Crlf
- 0000001B			FindNextNumber:
- 0000001B  47				inc	edi
- 0000001C  80 3F 00			cmp	BYTE PTR [edi],0
- 0000001F  75 FA			jnz	FindNextNumber
- 00000021  47				inc	edi
- 00000022  E2 EB		loop PrintDay
+ 00000041  A0 00000003 R		mov	al,bigEndian[3]
+ 00000046  8A 25 00000002 R		mov	ah,bigEndian[2]
+ 0000004C  66| A3			mov	WORD PTR littleEndian,ax
+	   00000000 R
+ 00000052  A0 00000001 R		mov	al,bigEndian[1]
+ 00000057  8A 25 00000000 R		mov	ah,bigEndian
+ 0000005D  66| A3			mov	WORD PTR littleEndian[2],ax
+	   00000002 R
+
+ 00000063  E8 00000000 E		call Crlf
+ 00000068  BA 00000095 R		mov	edx,OFFSET littleEndianMem
+ 0000006D  E8 00000000 E		call WriteString
+ 00000072  BE 00000000 R		mov	esi,OFFSET littleEndian
+ 00000077  B9 00000004			mov	ecx,4
+ 0000007C  BB 00000001			mov	ebx,TYPE BYTE
+ 00000081  E8 00000000 E		call DumpMem
+ 00000086  BA 000000FA R		mov	edx,OFFSET littleEndianDWORD
+ 0000008B  E8 00000000 E		call WriteString
+ 00000090  BE 00000000 R		mov	esi,OFFSET littleEndian
+ 00000095  B9 00000001			mov	ecx,LENGTHOF littleEndian
+ 0000009A  BB 00000004			mov	ebx,TYPE littleEndian
+ 0000009F  E8 00000000 E		call DumpMem
+
+ 000000A4  E8 00000000 E		call Crlf
 
 					exit
- 0000002B			main ENDP
+ 000000B0			main ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 14:04:12
-Symbolic Integer Constant				     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 14:08:25
++Converting from Big Endian to Little Endia		     Symbols 2 - 1
 
 
 
@@ -162,8 +234,9 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000039 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 0000002B Para	  Public  'CODE'	
+_BSS . . . . . . . . . . . . . .	32 Bit	 00000004 Para	  Public  'BSS'  
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000124 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 000000B0 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -270,9 +343,7 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000002B Public STDCALL
-  PrintDay . . . . . . . . . . .	L Near	 0000000F _TEXT	
-  FindNextNumber . . . . . . . .	L Near	 0000001B _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 000000B0 Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -334,7 +405,6 @@ FILE_WRITE_DATA  . . . . . . . .	Number	 00000002h
 FOCUS_EVENT  . . . . . . . . . .	Number	 00000010h   
 FORMAT_MESSAGE_ALLOCATE_BUFFER .	Number	 00000100h   
 FORMAT_MESSAGE_FROM_SYSTEM . . .	Number	 00001000h   
-FRI  . . . . . . . . . . . . . .	Text   	 "Friday",0
 FormatMessage  . . . . . . . . .	Text   	 FormatMessageA
 GENERIC_ALL  . . . . . . . . . .	Number	 10000000h   
 GENERIC_EXECUTE  . . . . . . . .	Number	 20000000h   
@@ -390,11 +460,9 @@ MB_USERICON  . . . . . . . . . .	Number	 00000080h
 MB_YESNOCANCEL . . . . . . . . .	Number	 00000003h   
 MB_YESNO . . . . . . . . . . . .	Number	 00000004h   
 MENU_EVENT . . . . . . . . . . .	Number	 00000008h   
-MON  . . . . . . . . . . . . . .	Text   	 "Monday",0
 MOUSE_EVENT  . . . . . . . . . .	Number	 00000002h   
 MessageBox . . . . . . . . . . .	Text   	 MessageBoxA
 NULL . . . . . . . . . . . . . .	Number	 00000000h   
-NUMBER_OF_DAYS . . . . . . . . .	Number	 00000007h   
 NUMLOCK_ON . . . . . . . . . . .	Number	 00000020h   
 OPEN_ALWAYS  . . . . . . . . . .	Number	 00000004h   
 OPEN_EXISTING  . . . . . . . . .	Number	 00000003h   
@@ -403,20 +471,16 @@ RIGHT_ALT_PRESSED  . . . . . . .	Number	 00000001h
 RIGHT_CTRL_PRESSED . . . . . . .	Number	 00000004h   
 ReadConsoleInput . . . . . . . .	Text   	 ReadConsoleInputA
 ReadConsole  . . . . . . . . . .	Text   	 ReadConsoleA
-SAT  . . . . . . . . . . . . . .	Text   	 "Saturday",0
 SCROLLLOCK_ON  . . . . . . . . .	Number	 00000040h   
 SHIFT_MASK . . . . . . . . . . .	Number	 00000010h   
 SHIFT_PRESSED  . . . . . . . . .	Number	 00000010h   
 STD_ERROR_HANDLE . . . . . . . .	Number	 -0000000Ch   
 STD_INPUT_HANDLE . . . . . . . .	Number	 -0000000Ah   
 STD_OUTPUT_HANDLE  . . . . . . .	Number	 -0000000Bh   
-SUN  . . . . . . . . . . . . . .	Text   	 "Sunday",0
 SetConsoleTitle  . . . . . . . .	Text   	 SetConsoleTitleA
 TAB  . . . . . . . . . . . . . .	Number	 00000009h   
-THU  . . . . . . . . . . . . . .	Text   	 "Thursday",0
 TRUE . . . . . . . . . . . . . .	Number	 00000001h   
 TRUNCATE_EXISTING  . . . . . . .	Number	 00000005h   
-TUE  . . . . . . . . . . . . . .	Text   	 "Tuesday",0
 VK_11  . . . . . . . . . . . . .	Number	 000000BDh   
 VK_12  . . . . . . . . . . . . .	Number	 000000BBh   
 VK_ADD . . . . . . . . . . . . .	Number	 0000006Bh   
@@ -495,10 +559,12 @@ VK_SPACE . . . . . . . . . . . .	Number	 00000020h
 VK_SUBTRACT  . . . . . . . . . .	Number	 0000006Dh   
 VK_TAB . . . . . . . . . . . . .	Number	 00000009h   
 VK_UP  . . . . . . . . . . . . .	Number	 00000026h   
-WED  . . . . . . . . . . . . . .	Text   	 "Wednesday",0
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
+bigEndianDWORD . . . . . . . . .	Byte	 00000061 _DATA	
+bigEndianMem . . . . . . . . . .	Byte	 00000004 _DATA	
+bigEndian  . . . . . . . . . . .	Byte	 00000000 _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
@@ -512,9 +578,11 @@ lightGray  . . . . . . . . . . .	Number	 00000007h
 lightGreen . . . . . . . . . . .	Number	 0000000Ah   
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
+littleEndianDWORD  . . . . . . .	Byte	 000000FA _DATA	
+littleEndianMem  . . . . . . . .	Byte	 00000095 _DATA	
+littleEndian . . . . . . . . . .	DWord	 00000000 _BSS	
 magenta  . . . . . . . . . . . .	Number	 00000005h   
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-weekdays . . . . . . . . . . . .	Byte	 00000000 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
