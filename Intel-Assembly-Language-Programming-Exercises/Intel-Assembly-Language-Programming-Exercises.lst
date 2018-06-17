@@ -1,11 +1,9 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 15:09:30
-Fibonacci Number					     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 17:22:33
+Reverse an Arra					     Page 1 - 1
 
 
-				TITLE Fibonacci Numbers
-				; This program calculates the first seven values of the Fibonacci number
-				; sequence using a loop. The sequence is described by the formula:
-				; Fib(1) = 1, Fib(2) = 1, Fib(n) = Fib(n - 1) + Fib(n - 2)
+				TITLE Reverse an Array
+				; This program reverses the elements of an integer array.
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -25,62 +23,108 @@ Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 15:09:30
 			      C .LIST
 			      C 
 
- = 00000007			NUMBER_OF_VALUES = 7
-
  00000000			.DATA
- 00000000 46 69 72 73 74	explanation		BYTE "First ",0
-	   20 00
- 00000007  20 76 61 6C 75					BYTE " values of the Fibonacci number sequence:",0
-	   65 73 20 6F 66
-	   20 74 68 65 20
-	   46 69 62 6F 6E
-	   61 63 63 69 20
-	   6E 75 6D 62 65
-	   72 20 73 65 71
-	   75 65 6E 63 65
-	   3A 00
-
- 00000000			.DATA?
- 00000000  00000007 [		fibonacciSequence	BYTE NUMBER_OF_VALUES DUP(?)
-	    00
-	   ]
+ 00000000 00000001		intArray		DWORD	1,5,6,8,0Ah,1Bh,1Eh,22h,2Ah,32h
+	   00000005
+	   00000006
+	   00000008
+	   0000000A
+	   0000001B
+	   0000001E
+	   00000022
+	   0000002A
+	   00000032
+ 00000028 4F 72 69 67 69	original		BYTE		"Original array:",0
+	   6E 61 6C 20 61
+	   72 72 61 79 3A
+	   00
+ 00000038 52 65 76 65 72	reversed		BYTE		"Reversed array:",0
+	   73 65 64 20 61
+	   72 72 61 79 3A
+	   00
 
  00000000			.CODE
  00000000			main PROC
- 00000000  E8 00000000 E		call	Clrscr
+ 00000000  E8 00000000 E		call Clrscr
+ 00000005  BA 00000028 R		mov	edx,OFFSET original
+ 0000000A  E8 00000000 E		call	Writestring
+ 0000000F  E8 00000000 E		call	Crlf
+ 00000014  BE 00000000 R		mov	esi,OFFSET intArray
+ 00000019  B9 0000000A			mov	ecx,LENGTHOF intArray
+ 0000001E  BB 00000004			mov	ebx,TYPE intArray
+ 00000023  E8 00000000 E		call	DumpMem
+ 00000028  BE 00000000 R		mov	esi,OFFSET intArray
+ 0000002D  BF 00000024 R		mov	edi,OFFSET intArray + SIZEOF intArray - TYPE intArray
+ 00000032  B9 0000000A			mov	ecx,LENGTHOF intArray
+ 00000037  B8 00000004			mov	eax,TYPE intArray
 
- 00000005  C6 05 00000000 R		mov	fibonacciSequence[0],1
-	   01
- 0000000C  C6 05 00000001 R		mov	fibonacciSequence[1],1
-	   01
- 00000013  B9 00000005			mov	ecx,NUMBER_OF_VALUES - 2
- 00000018  BE 00000002			mov	esi,2
- 0000001D			CalculateSequence:
- 0000001D  8A 86 FFFFFFFF R		mov	al,fibonacciSequence[esi - 1]
- 00000023  02 86 FFFFFFFE R		add	al,fibonacciSequence[esi - 2]
- 00000029  88 86 00000000 R		mov	fibonacciSequence[esi],al
- 0000002F  46				inc	esi
- 00000030  E2 EB		loop CalculateSequence
-
- 00000032  BA 00000000 R		mov	edx,OFFSET explanation
- 00000037  E8 00000000 E		call	Writestring
- 0000003C  B8 00000007			mov	eax,NUMBER_OF_VALUES
- 00000041  E8 00000000 E		call	Writedec
- 00000046  BA 00000007 R		mov	edx,OFFSET explanation[7]
- 0000004B  E8 00000000 E		call	Writestring
- 00000050  E8 00000000 E		call	Crlf
-
- 00000055  BE 00000000 R		mov	esi,OFFSET fibonacciSequence
- 0000005A  B9 00000007			mov	ecx,LENGTHOF fibonacciSequence
- 0000005F  BB 00000001			mov	ebx,TYPE fibonacciSequence
- 00000064  E8 00000000 E		call DumpMem
- 00000069  E8 00000000 E		call	Crlf
-
+ 0000003C  83 F8 04			cmp	eax,TYPE DWORD
+ 0000003F  75 07			jne NotDWORD
+ 00000041  E8 00000042			call	ReverseDWORD
+ 00000046  EB 11			jmp	Output
+ 00000048			NotDWORD:
+ 00000048  83 F8 02			cmp	eax,TYPE WORD
+ 0000004B  75 07			jne	NotWORD
+ 0000004D  E8 00000049			call	ReverseWORD
+ 00000052  EB 05			jmp	Output
+ 00000054			NotWORD:
+ 00000054  E8 0000005A			call	ReverseBYTE
+ 00000059			Output:
+ 00000059  BA 00000038 R		mov	edx,OFFSET reversed
+ 0000005E  E8 00000000 E		call	Writestring
+ 00000063  E8 00000000 E		call	Crlf
+ 00000068  BE 00000000 R		mov	esi,OFFSET intArray
+ 0000006D  B9 0000000A			mov	ecx,LENGTHOF intArray
+ 00000072  BB 00000004			mov	ebx,TYPE intArray
+ 00000077  E8 00000000 E		call	DumpMem
+ 0000007C  E8 00000000 E		call	Crlf
 					exit
- 00000075			main ENDP
+ 00000088			main ENDP
+
+ 00000088			ReverseDWORD PROC
+ 00000088			ReverseArray:
+ 00000088  8B 06			mov	eax,[esi]
+ 0000008A  8B 1F			mov	ebx,[edi]
+ 0000008C  93				xchg	eax,ebx
+ 0000008D  89 06			mov	[esi],eax
+ 0000008F  89 1F			mov	[edi],ebx
+ 00000091  83 C6 04			add	esi,TYPE intArray
+ 00000094  83 EF 04			sub	edi,TYPE intArray
+ 00000097  49				dec	ecx
+ 00000098  E2 EE		loop ReverseArray
+ 0000009A  C3				ret
+ 0000009B			ReverseDWORD ENDP
+
+ 0000009B			ReverseWORD PROC
+ 0000009B			ReverseArray:
+ 0000009B  66| 8B 06			mov	ax,[esi]
+ 0000009E  66| 8B 1F			mov	bx,[edi]
+ 000000A1  66| 93			xchg	ax,bx
+ 000000A3  66| 89 06			mov	[esi],ax
+ 000000A6  66| 89 1F			mov	[edi],bx
+ 000000A9  83 C6 04			add	esi,TYPE intArray
+ 000000AC  83 EF 04			sub	edi,TYPE intArray
+ 000000AF  49				dec	ecx
+ 000000B0  E2 E9		loop ReverseArray
+ 000000B2  C3				ret
+ 000000B3			ReverseWORD ENDP
+
+ 000000B3			ReverseBYTE PROC
+ 000000B3			ReverseArray:
+ 000000B3  8A 06			mov	al,[esi]
+ 000000B5  8A 1F			mov	bl,[edi]
+ 000000B7  86 C3			xchg	al,bl
+ 000000B9  88 06			mov	[esi],al
+ 000000BB  88 1F			mov	[edi],bl
+ 000000BD  83 C6 04			add	esi,TYPE intArray
+ 000000C0  83 EF 04			sub	edi,TYPE intArray
+ 000000C3  49				dec	ecx
+ 000000C4  E2 ED		loop ReverseArray
+ 000000C6  C3				ret
+ 000000C7			ReverseBYTE ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 15:09:30
-Fibonacci Number					     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 17:22:33
+Reverse an Arra					     Symbols 2 - 1
 
 
 
@@ -173,9 +217,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_BSS . . . . . . . . . . . . . .	32 Bit	 00000007 Para	  Public  'BSS'  
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000031 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000075 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000048 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 000000C7 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -245,6 +288,12 @@ ReadInt  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 ReadKeyFlush . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadKey  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadString . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReverseBYTE  . . . . . . . . . .	P Near	 000000B3 _TEXT	Length= 00000014 Public STDCALL
+  ReverseArray . . . . . . . . .	L Near	 000000B3 _TEXT	
+ReverseDWORD . . . . . . . . . .	P Near	 00000088 _TEXT	Length= 00000013 Public STDCALL
+  ReverseArray . . . . . . . . .	L Near	 00000088 _TEXT	
+ReverseWORD  . . . . . . . . . .	P Near	 0000009B _TEXT	Length= 00000018 Public STDCALL
+  ReverseArray . . . . . . . . .	L Near	 0000009B _TEXT	
 SetConsoleCursorInfo . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 SetConsoleCursorPosition . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 SetConsoleMode . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -282,8 +331,10 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000075 Public STDCALL
-  CalculateSequence  . . . . . .	L Near	 0000001D _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000088 Public STDCALL
+  NotDWORD . . . . . . . . . . .	L Near	 00000048 _TEXT	
+  NotWORD  . . . . . . . . . . .	L Near	 00000054 _TEXT	
+  Output . . . . . . . . . . . .	L Near	 00000059 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -403,7 +454,6 @@ MENU_EVENT . . . . . . . . . . .	Number	 00000008h
 MOUSE_EVENT  . . . . . . . . . .	Number	 00000002h   
 MessageBox . . . . . . . . . . .	Text   	 MessageBoxA
 NULL . . . . . . . . . . . . . .	Number	 00000000h   
-NUMBER_OF_VALUES . . . . . . . .	Number	 00000007h   
 NUMLOCK_ON . . . . . . . . . . .	Number	 00000020h   
 OPEN_ALWAYS  . . . . . . . . . .	Number	 00000004h   
 OPEN_EXISTING  . . . . . . . . .	Number	 00000003h   
@@ -508,10 +558,9 @@ blue . . . . . . . . . . . . . .	Number	 00000001h
 brown  . . . . . . . . . . . . .	Number	 00000006h   
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
-explanation  . . . . . . . . . .	Byte	 00000000 _DATA	
-fibonacciSequence  . . . . . . .	Byte	 00000000 _BSS	
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
+intArray . . . . . . . . . . . .	DWord	 00000000 _DATA	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
@@ -519,7 +568,9 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
+original . . . . . . . . . . . .	Byte	 00000028 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
+reversed . . . . . . . . . . . .	Byte	 00000038 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
