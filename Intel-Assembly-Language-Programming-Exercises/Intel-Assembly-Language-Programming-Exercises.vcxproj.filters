@@ -45,5 +45,8 @@
     <MASM Include="4_6_ReverseanArray.asm">
       <Filter>Source Files\Chapter4</Filter>
     </MASM>
+    <MASM Include="4_7_CopyaStringinReverseOrder.asm">
+      <Filter>Source Files\Chapter4</Filter>
+    </MASM>
   </ItemGroup>
 </Project>
