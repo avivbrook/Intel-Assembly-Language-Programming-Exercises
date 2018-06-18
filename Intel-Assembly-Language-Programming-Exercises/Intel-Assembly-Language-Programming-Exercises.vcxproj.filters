@@ -66,5 +66,8 @@
     <MASM Include="5_4_SimpleAddition(2).asm">
       <Filter>Source Files\Chapter5</Filter>
     </MASM>
+    <MASM Include="5_5_BetterRandomRangeProcedure.asm">
+      <Filter>Source Files\Chapter5</Filter>
+    </MASM>
   </ItemGroup>
 </Project>

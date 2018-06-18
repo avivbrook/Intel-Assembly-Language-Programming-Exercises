@@ -1,10 +1,10 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 08:35:57
-Simple Addition (2					     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 08:45:17
+BetterRandomRange Procedur				     Page 1 - 1
 
 
-				TITLE Simple Addition (2)
-				; This program does the same thing as Simple Addition (1) but repeats it
-				; three times with a loop
+				TITLE BetterRandomRange Procedure
+				; This program showcases the BetterRandomRange procedure, an improved
+				; version of the RandomRange procedure.
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -24,80 +24,37 @@ Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 08:35:57
 			      C .LIST
 			      C 
 
- 00000000			.DATA
- 00000000 45 6E 74 65 72	prompt1	BYTE		"Enter the first integer: ",0
-	   20 74 68 65 20
-	   66 69 72 73 74
-	   20 69 6E 74 65
-	   67 65 72 3A 20
-	   00
- 0000001A 45 6E 74 65 72	prompt2	BYTE		"Enter the second integer: ",0
-	   20 74 68 65 20
-	   73 65 63 6F 6E
-	   64 20 69 6E 74
-	   65 67 65 72 3A
-	   20 00
- 00000035 54 68 65 20 73	result	BYTE		"The sum of the two integers is: ",0
-	   75 6D 20 6F 66
-	   20 74 68 65 20
-	   74 77 6F 20 69
-	   6E 74 65 67 65
-	   72 73 20 69 73
-	   3A 20 00
+ = 00000032			NUMBER_OF_CALLS = 50
 
- 00000000			.DATA?
- 00000000 00000000		integer1	DWORD	?
- 00000004 00000000		integer2	DWORD	?
- 00000008 00000000		sum		DWORD	?
+ 00000000			.DATA
+ 00000000 FFFFFED4		M	DWORD	-300
+ 00000004 00000064		N	DWORD	100
 
  00000000			.CODE
  00000000			main PROC
- 00000000  B9 00000003			mov	ecx,3
- 00000005			RunProgram:
- 00000005  E8 0000004E			call	GetInput
- 0000000A  A1 00000000 R		mov	eax,integer1
- 0000000F  03 05 00000004 R		add	eax,integer2
- 00000015  A3 00000008 R		mov	sum,eax
- 0000001A  B6 0F			mov	dh,15
- 0000001C  B2 24			mov	dl,36
- 0000001E  E8 00000000 E		call	Gotoxy
- 00000023  BA 00000035 R		mov	edx,OFFSET result
- 00000028  E8 00000000 E		call	Writestring
- 0000002D  A1 00000008 R		mov	eax,sum
- 00000032  E8 00000000 E		call	Writeint
- 00000037  E8 00000000 E		call	Crlf
- 0000003C  B6 11			mov	dh,17
- 0000003E  B2 28			mov	dl,40
- 00000040  E8 00000000 E		call	Gotoxy
- 00000045  83 F9 01			cmp	ecx,1
- 00000048  74 07			je next
- 0000004A  E8 00000000 E		call WaitMsg
- 0000004F  E2 B4		loop RunProgram
- 00000051			next:
+ 00000000  E8 00000000 E		call	Clrscr
+ 00000005  A1 00000000 R		mov	eax,M
+ 0000000A  8B 1D 00000004 R		mov	ebx,N
+ 00000010  B9 00000032			mov	ecx,NUMBER_OF_CALLS
+ 00000015			GenerateValues:
+ 00000015  E8 00000009			call BetterRandomRange
+ 0000001A  E2 F9		loop GenerateValues
 					exit
- 00000058			main ENDP
+ 00000023			main ENDP
 
- 00000058			GetInput PROC
- 00000058  E8 00000000 E		call	Clrscr
- 0000005D  B6 0C			mov	dh,12
- 0000005F  B2 28			mov	dl,40
- 00000061  E8 00000000 E		call	Gotoxy
- 00000066  BA 00000000 R		mov	edx,OFFSET prompt1
- 0000006B  E8 00000000 E		call	Writestring
- 00000070  E8 00000000 E		call	Readint
- 00000075  A3 00000000 R		mov	integer1,eax
- 0000007A  B6 0D			mov	dh,13
- 0000007C  B2 28			mov	dl,40
- 0000007E  E8 00000000 E		call	Gotoxy
- 00000083  BA 0000001A R		mov	edx,OFFSET prompt2
- 00000088  E8 00000000 E		call	WriteString
- 0000008D  E8 00000000 E		call	Readint
- 00000092  A3 00000004 R		mov	integer2,eax
- 00000097  C3				ret
- 00000098			GetInput ENDP
+ 00000023			BetterRandomRange PROC USES eax ebx
+ 00000025  2B D8			sub	ebx,eax
+ 00000027  93				xchg	ebx,eax
+ 00000028  E8 00000000 E		call	RandomRange
+ 0000002D  F7 DB			neg	ebx
+ 0000002F  2B C3			sub	eax,ebx
+ 00000031  E8 00000000 E		call	Writeint
+ 00000036  E8 00000000 E		call	Crlf
+					ret
+ 0000003E			BetterRandomRange ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 08:35:57
-Simple Addition (2					     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 08:45:17
+BetterRandomRange Procedur				     Symbols 2 - 1
 
 
 
@@ -190,15 +147,15 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_BSS . . . . . . . . . . . . . .	32 Bit	 0000000C Para	  Public  'BSS'  
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000056 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000098 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000008 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000003E Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
 
                 N a m e                 Type     Value    Attr
 
+BetterRandomRange  . . . . . . .	P Near	 00000023 _TEXT	Length= 0000001B Public STDCALL
 CloseFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 CloseHandle  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Clrscr . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -221,7 +178,6 @@ GetConsoleMode . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 GetConsoleScreenBufferInfo . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetDateTime  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetFileTime  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-GetInput . . . . . . . . . . . .	P Near	 00000058 _TEXT	Length= 00000040 Public STDCALL
 GetKeyState  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetLastError . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetLocalTime . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -300,9 +256,8 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000058 Public STDCALL
-  RunProgram . . . . . . . . . .	L Near	 00000005 _TEXT	
-  next . . . . . . . . . . . . .	L Near	 00000051 _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000023 Public STDCALL
+  GenerateValues . . . . . . . .	L Near	 00000015 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -421,8 +376,11 @@ MB_YESNO . . . . . . . . . . . .	Number	 00000004h
 MENU_EVENT . . . . . . . . . . .	Number	 00000008h   
 MOUSE_EVENT  . . . . . . . . . .	Number	 00000002h   
 MessageBox . . . . . . . . . . .	Text   	 MessageBoxA
+M  . . . . . . . . . . . . . . .	DWord	 00000000 _DATA	
 NULL . . . . . . . . . . . . . .	Number	 00000000h   
+NUMBER_OF_CALLS  . . . . . . . .	Number	 00000032h   
 NUMLOCK_ON . . . . . . . . . . .	Number	 00000020h   
+N  . . . . . . . . . . . . . . .	DWord	 00000004 _DATA	
 OPEN_ALWAYS  . . . . . . . . . .	Number	 00000004h   
 OPEN_EXISTING  . . . . . . . . .	Number	 00000003h   
 PeekConsoleInput . . . . . . . .	Text   	 PeekConsoleInputA
@@ -528,8 +486,6 @@ cyan . . . . . . . . . . . . . .	Number	 00000003h
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
-integer1 . . . . . . . . . . . .	DWord	 00000000 _BSS	
-integer2 . . . . . . . . . . . .	DWord	 00000004 _BSS	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
@@ -537,11 +493,7 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-prompt1  . . . . . . . . . . . .	Byte	 00000000 _DATA	
-prompt2  . . . . . . . . . . . .	Byte	 0000001A _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-result . . . . . . . . . . . . .	Byte	 00000035 _DATA	
-sum  . . . . . . . . . . . . . .	DWord	 00000008 _BSS	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
