@@ -57,5 +57,8 @@
     <MASM Include="5_1_DrawTextColours.asm">
       <Filter>Source Files\Chapter5</Filter>
     </MASM>
+    <MASM Include="5_2_LinkingArrayItems.asm">
+      <Filter>Source Files\Chapter5</Filter>
+    </MASM>
   </ItemGroup>
 </Project>

@@ -1,10 +1,12 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/17/18 23:46:34
-Draw Text Colour					     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 00:12:47
+Linking Array Item					     Page 1 - 1
 
 
-				TITLE Draw Text Colours
-				; This program displays the same string in four different colours, using
-				; the SetTextColor procedure from the Irvine32 link library and a loop.
+				TITLE Linking Array Items
+				; Given the starting index in a list, an array of characters, and an array
+				; of link index, this program traverses the links and locates the
+				; characters in their correct sequence. Each character the program
+				; locates is then copied to a new array.
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -25,32 +27,49 @@ Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/17/18 23:46:34
 			      C 
 
  00000000			.DATA
- 00000000 54 68 69 73 20	myString	BYTE	"This string will change colours!",0
-	   73 74 72 69 6E
-	   67 20 77 69 6C
-	   6C 20 63 68 61
-	   6E 67 65 20 63
-	   6F 6C 6F 75 72
-	   73 21 00
+ 00000000 00000001		start		DWORD	1
+ 00000004 48 41 43 45 42	chars		BYTE		'H','A','C','E','B','D','F','G'
+	   44 46 47
+ 0000000C 00000000		links		DWORD	0,4,5,6,2,3,7,0
+	   00000004
+	   00000005
+	   00000006
+	   00000002
+	   00000003
+	   00000007
+	   00000000
+ 0000002C 04			linksType		BYTE		TYPE links
+
+ 00000000			.DATA?
+ 00000000  00000008 [		outputArray	BYTE		LENGTHOF chars DUP(?)
+	    00
+	   ]
 
  00000000			.CODE
- 00000000			main PROC
- 00000000  B8 0000001C			mov	eax,lightRed + (blue * 16)
- 00000005  E8 00000000 E		call	SetTextColor
- 0000000A  E8 00000000 E		call	Clrscr
- 0000000F  B9 00000004			mov	ecx,4
- 00000014			ChangeColours:
- 00000014  E8 00000000 E		call	SetTextColor
- 00000019  BA 00000000 R		mov	edx,OFFSET myString
- 0000001E  E8 00000000 E		call	Writestring
- 00000023  E8 00000000 E		call	Crlf
- 00000028  83 C0 01			add	eax,1
- 0000002B  E2 E7		loop ChangeColours
+ 00000000			main	PROC
+ 00000000  B9 00000008			mov	ecx,LENGTHOF outputArray
+ 00000005  BF 00000000 R		mov	edi,OFFSET outputArray
+ 0000000A			TraverseLinks:
+ 0000000A  BE 00000004 R		mov	esi,OFFSET chars
+ 0000000F  03 35 00000000 R		add	esi,start
+ 00000015  8A 06			mov	al,[esi]
+ 00000017  88 07			mov	[edi],al
+
+ 00000019  BA 0000000C R		mov	edx,OFFSET links
+ 0000001E  A1 00000000 R		mov	eax,start
+ 00000023  F6 25 0000002C R		mul	linksType
+ 00000029  A3 00000000 R		mov	start,eax
+ 0000002E  03 15 00000000 R		add	edx,start
+ 00000034  8B 02			mov	eax,[edx]
+ 00000036  A3 00000000 R		mov	start,eax
+ 0000003B  47				inc	edi
+ 0000003C  E2 CC		loop TraverseLinks
+
 					exit
- 00000034			main ENDP
+ 00000045			main	ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/17/18 23:46:34
-Draw Text Colour					     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 00:12:47
+Linking Array Item					     Symbols 2 - 1
 
 
 
@@ -143,8 +162,9 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000021 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000034 Para	  Public  'CODE'	
+_BSS . . . . . . . . . . . . . .	32 Bit	 00000008 Para	  Public  'BSS'  
+_DATA  . . . . . . . . . . . . .	32 Bit	 0000002D Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000045 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -251,8 +271,8 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000034 Public STDCALL
-  ChangeColours  . . . . . . . .	L Near	 00000014 _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000045 Public STDCALL
+  TraverseLinks  . . . . . . . .	L Near	 0000000A _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -474,6 +494,7 @@ WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
+chars  . . . . . . . . . . . . .	Byte	 00000004 _DATA	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
@@ -484,9 +505,12 @@ lightGray  . . . . . . . . . . .	Number	 00000007h
 lightGreen . . . . . . . . . . .	Number	 0000000Ah   
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
+linksType  . . . . . . . . . . .	Byte	 0000002C _DATA	
+links  . . . . . . . . . . . . .	DWord	 0000000C _DATA	
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-myString . . . . . . . . . . . .	Byte	 00000000 _DATA	
+outputArray  . . . . . . . . . .	Byte	 00000000 _BSS	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
+start  . . . . . . . . . . . . .	DWord	 00000000 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
