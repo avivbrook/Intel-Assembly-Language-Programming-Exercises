@@ -72,5 +72,8 @@
     <MASM Include="5_6_RandomString.asm">
       <Filter>Source Files\Chapter5</Filter>
     </MASM>
+    <MASM Include="5_7_RandomScreenLocations.asm">
+      <Filter>Source Files\Chapter5</Filter>
+    </MASM>
   </ItemGroup>
 </Project>

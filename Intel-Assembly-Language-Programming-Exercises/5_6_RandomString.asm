@@ -32,8 +32,7 @@ main ENDP
 GenerateRandomString PROC USES eax ecx esi
 	mov	ecx,eax
 GenerateChar:
-	mov	eax,91
-	sub	eax,65
+	mov	eax,26
 	call	RandomRange
 	add	eax,65
 	mov	[esi],eax

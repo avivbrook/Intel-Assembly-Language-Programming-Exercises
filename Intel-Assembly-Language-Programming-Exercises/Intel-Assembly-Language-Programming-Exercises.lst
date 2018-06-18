@@ -1,10 +1,10 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 09:56:34
-Random String						     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 10:52:53
+Random Screen Locatio					     Page 1 - 1
 
 
-				TITLE Random Strings
-				; This program showcases the RandomString procedure, which generates a
-				; random string of length L.
+				TITLE Random Screen Location
+				; This program displays a single character at 100 random screen locations,
+				; using a timing delay of 100 milliseconds.
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -24,51 +24,40 @@ Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 09:56:34
 			      C .LIST
 			      C 
 
- = 00000014			NUMBER_OF_STRINGS = 20
- = 00000007			L = 7
+ = 00000064			NUMBER_OF_CHARS = 100
+
+ 00000000			.DATA
+ 00000000 41			char	BYTE	'A'
 
  00000000			.DATA?
- 00000000  00000007 [		randomString	BYTE		L DUP (?)
-	    00
-	   ]
+ 00000000 00			rows	BYTE	?
+ 00000001 00			cols	BYTE	?
 
  00000000			.CODE
  00000000			main PROC
- 00000000  E8 00000000 E		call	Clrscr
- 00000005  B8 00000007			mov	eax,L
- 0000000A  BE 00000000 R		mov	esi,OFFSET randomString
- 0000000F  B9 00000014			mov	ecx,NUMBER_OF_STRINGS
- 00000014			GenerateStrings:
- 00000014  E8 00000018			call	GenerateRandomString
- 00000019  BA 00000000 R		mov	edx,OFFSET randomString
- 0000001E  E8 00000000 E		call	Writestring
- 00000023  E8 00000000 E		call	Crlf
- 00000028  E2 EA		loop GenerateStrings
+ 00000000  E8 00000000 E		call	GetMaxXY
+ 00000005  B9 00000064			mov	ecx,NUMBER_OF_CHARS
+ 0000000A			GenerateCharsAndPrint:
+ 0000000A  E8 00000009			call	RandomScreenLocation
+ 0000000F  E2 F9		loop GenerateCharsAndPrint
 					exit
- 00000031			main ENDP
+ 00000018			main ENDP
 
-				; Generates a random string of length L.
-				; Receives:	EAX =	L (string length)
-				;			ESI =	pointer to array of bytes that will hold the
-				;					random string
-				; Returns:	randomString = the pseudorandomly generated string
- 00000031			GenerateRandomString PROC USES eax ecx esi
- 00000034  8B C8			mov	ecx,eax
- 00000036			GenerateChar:
- 00000036  B8 0000005B			mov	eax,91
- 0000003B  83 E8 41			sub	eax,65
- 0000003E  E8 00000000 E		call	RandomRange
- 00000043  83 C0 41			add	eax,65
- 00000046  89 06			mov	[esi],eax
- 00000048  46				inc	esi
- 00000049  E2 EB		loop GenerateChar
- 0000004B  B8 00000000			mov	eax,0
- 00000050  89 06			mov	[esi],eax
+ 00000018			RandomScreenLocation PROC USES eax edx
+ 0000001A  0F B6 C0			movzx	eax,al
+ 0000001D  E8 00000000 E		call		RandomRange
+ 00000022  8A F0			mov		dh,al
+ 00000024  0F B6 C2			movzx	eax,dl
+ 00000027  E8 00000000 E		call		RandomRange
+ 0000002C  8A D0			mov		dl,al
+ 0000002E  E8 00000000 E		call		Gotoxy
+ 00000033  A0 00000000 R		mov		al,char
+ 00000038  E8 00000000 E		call		WriteChar
 					ret
- 00000056			GenerateRandomString ENDP
+ 00000040			RandomScreenLocation ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 09:56:34
-Random String						     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 10:52:53
+Random Screen Locatio					     Symbols 2 - 1
 
 
 
@@ -161,9 +150,9 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_BSS . . . . . . . . . . . . . .	32 Bit	 00000007 Para	  Public  'BSS'  
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000000 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000056 Para	  Public  'CODE'	
+_BSS . . . . . . . . . . . . . .	32 Bit	 00000002 Para	  Public  'BSS'  
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000001 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000040 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -184,8 +173,6 @@ FileTimeToDosDateTime  . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 FileTimeToSystemTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FlushConsoleInputBuffer  . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FormatMessageA . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-GenerateRandomString . . . . . .	P Near	 00000031 _TEXT	Length= 00000025 Public STDCALL
-  GenerateChar . . . . . . . . .	L Near	 00000036 _TEXT	
 GetCommandLineA  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetCommandTail . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetConsoleCP . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -222,6 +209,7 @@ ParseInteger32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 PeekConsoleInputA  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Random32 . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 RandomRange  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+RandomScreenLocation . . . . . .	P Near	 00000018 _TEXT	Length= 00000028 Public STDCALL
 Randomize  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadChar . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadConsoleA . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -272,8 +260,8 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000031 Public STDCALL
-  GenerateStrings  . . . . . . .	L Near	 00000014 _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000018 Public STDCALL
+  GenerateCharsAndPrint  . . . .	L Near	 0000000A _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -365,7 +353,6 @@ KEY_EVENT  . . . . . . . . . . .	Number	 00000001h
 KEY_MASKS  . . . . . . . . . . .	Number	 0000001Fh   
 LEFT_ALT_PRESSED . . . . . . . .	Number	 00000002h   
 LEFT_CTRL_PRESSED  . . . . . . .	Number	 00000008h   
-L  . . . . . . . . . . . . . . .	Number	 00000007h   
 MB_ABORTRETRYIGNORE  . . . . . .	Number	 00000002h   
 MB_APPLMODAL . . . . . . . . . .	Number	 00000000h   
 MB_CANCELTRYCONTINUE . . . . . .	Number	 00000006h   
@@ -394,7 +381,7 @@ MENU_EVENT . . . . . . . . . . .	Number	 00000008h
 MOUSE_EVENT  . . . . . . . . . .	Number	 00000002h   
 MessageBox . . . . . . . . . . .	Text   	 MessageBoxA
 NULL . . . . . . . . . . . . . .	Number	 00000000h   
-NUMBER_OF_STRINGS  . . . . . . .	Number	 00000014h   
+NUMBER_OF_CHARS  . . . . . . . .	Number	 00000064h   
 NUMLOCK_ON . . . . . . . . . . .	Number	 00000020h   
 OPEN_ALWAYS  . . . . . . . . . .	Number	 00000004h   
 OPEN_EXISTING  . . . . . . . . .	Number	 00000003h   
@@ -497,6 +484,8 @@ WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
+char . . . . . . . . . . . . . .	Byte	 00000000 _DATA	
+cols . . . . . . . . . . . . . .	Byte	 00000001 _BSS	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
@@ -508,8 +497,8 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-randomString . . . . . . . . . .	Byte	 00000000 _BSS	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
+rows . . . . . . . . . . . . . .	Byte	 00000000 _BSS	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
