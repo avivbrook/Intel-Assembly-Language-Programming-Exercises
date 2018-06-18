@@ -1,10 +1,8 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 13:38:06
-Fibonacci Generato					     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 15:50:58
+Finding Multiples of 					     Page 1 - 1
 
 
-				TITLE Fibonacci Generator
-				; This program produces N values of the Fibonacci number series and stores
-				; them in an array of doubleword.
+				TITLE Finding Multiples of K
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -24,38 +22,86 @@ Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 13:38:06
 			      C .LIST
 			      C 
 
- = 0000002F			N = 47
+ = 00000032			N = 50
+
+ 00000000			.DATA
+ 00000000  00000032 [		bArray	BYTE		N DUP(0)
+	    00
+	   ]
+ 00000032 41 6C 6C 20 6D	partOne	BYTE		"All multiples of ",0
+	   75 6C 74 69 70
+	   6C 65 73 20 6F
+	   66 20 00
+ 00000044 20 74 68 61 74	partTwo	BYTE		" that are less than ",0
+	   20 61 72 65 20
+	   6C 65 73 73 20
+	   74 68 61 6E 20
+	   00
 
  00000000			.DATA?
- 00000000  0000002F [		fibonacciSequence	DWORD	N DUP(?)
-	    00000000
-	   ]
+ 00000000 00000000		K		DWORD	?
 
  00000000			.CODE
  00000000			main PROC
  00000000  E8 00000000 E		call	Clrscr
- 00000005  C7 05 00000000 R		mov	fibonacciSequence[0],1
-	   00000001
- 0000000F  C7 05 00000004 R		mov	fibonacciSequence[4],1
-	   00000001
- 00000019  B9 0000002D			mov	ecx,N - 2
- 0000001E  BE 00000008			mov	esi,2 * TYPE DWORD
- 00000023			CalculateSequence:
- 00000023  8B 86 FFFFFFFC R		mov	eax,fibonacciSequence[esi - TYPE DWORD]
- 00000029  03 86 FFFFFFF8 R		add	eax,fibonacciSequence[esi - 2 * TYPE DWORD]
- 0000002F  89 86 00000000 R		mov	fibonacciSequence[esi],eax
- 00000035  83 C6 04			add	esi,TYPE DWORD
- 00000038  E2 E9		loop CalculateSequence
- 0000003A  BE 00000000 R		mov	esi,OFFSET fibonacciSequence
- 0000003F  B9 0000002F			mov	ecx,LENGTHOF fibonacciSequence
- 00000044  BB 00000004			mov	ebx,TYPE fibonacciSequence
- 00000049  E8 00000000 E		call DumpMem
- 0000004E  E8 00000000 E		call	Crlf
+ 00000005  C7 05 00000000 R		mov	K,2
+	   00000002
+ 0000000F  BA 00000032 R		mov	edx,OFFSET partOne
+ 00000014  E8 00000000 E		call	WriteString
+ 00000019  A1 00000000 R		mov	eax,K
+ 0000001E  E8 00000000 E		call	WriteDec
+ 00000023  BA 00000044 R		mov	edx,OFFSET partTwo
+ 00000028  E8 00000000 E		call	WriteString
+ 0000002D  B8 00000032			mov	eax,N
+ 00000032  E8 00000000 E		call	WriteDec
+ 00000037  E8 00000000 E		call	Crlf
+ 0000003C  E8 0000004D			call	FindMultiplesOfK
+ 00000041  E8 00000000 E		call	Crlf
+
+ 00000046  C7 05 00000000 R		mov	K,3
+	   00000003
+ 00000050  BA 00000032 R		mov	edx,OFFSET partOne
+ 00000055  E8 00000000 E		call	WriteString
+ 0000005A  A1 00000000 R		mov	eax,K
+ 0000005F  E8 00000000 E		call	WriteDec
+ 00000064  BA 00000044 R		mov	edx,OFFSET partTwo
+ 00000069  E8 00000000 E		call	WriteString
+ 0000006E  B8 00000032			mov	eax,N
+ 00000073  E8 00000000 E		call	WriteDec
+ 00000078  E8 00000000 E		call	Crlf
+ 0000007D  E8 0000000C			call	FindMultiplesOfK
+ 00000082  E8 00000000 E		call	Crlf
 					exit
- 0000005A			main ENDP
+ 0000008E			main ENDP
+
+				; In a byte array of size N, this procedure finds all multiples of K that
+				; are less than N.
+				; Receives:	bArray =	uninitialised byte array, N = array size,
+				;			K =		number whose multiples are searched for
+				; Returns:	bArray =	corresponding array elements of multiples are
+				;					marked
+ 0000008E			FindMultiplesOfK PROC USES ebx ecx edx esi
+ 00000092  BE 00000000 R		mov	esi,OFFSET bArray
+ 00000097  B9 00000032			mov	ecx,N
+ 0000009C  BA 00000001			mov	edx,1
+ 000000A1  8B 1D 00000000 R		mov	ebx,K
+ 000000A7			TraverseValues:
+ 000000A7  3B DA			cmp	ebx,edx
+ 000000A9  75 15			jne	NotMultiple
+ 000000AB  C6 06 01			mov	BYTE PTR [esi],1
+ 000000AE  03 1D 00000000 R		add	ebx,K
+ 000000B4  8B C2			mov	eax,edx
+ 000000B6  E8 00000000 E		call	WriteDec
+ 000000BB  E8 00000000 E		call	Crlf
+ 000000C0			NotMultiple:
+ 000000C0  42				inc	edx
+ 000000C1  83 C6 01			add	esi,TYPE bArray
+ 000000C4  E2 E1		loop TraverseValues
+					ret
+ 000000CB			FindMultiplesOfK ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 13:38:06
-Fibonacci Generato					     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 15:50:58
+Finding Multiples of 					     Symbols 2 - 1
 
 
 
@@ -148,9 +194,9 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_BSS . . . . . . . . . . . . . .	32 Bit	 000000BC Para	  Public  'BSS'  
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000000 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 0000005A Para	  Public  'CODE'	
+_BSS . . . . . . . . . . . . . .	32 Bit	 00000004 Para	  Public  'BSS'  
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000059 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 000000CB Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -169,6 +215,9 @@ DumpRegs . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 ExitProcess  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FileTimeToDosDateTime  . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FileTimeToSystemTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+FindMultiplesOfK . . . . . . . .	P Near	 0000008E _TEXT	Length= 0000003D Public STDCALL
+  TraverseValues . . . . . . . .	L Near	 000000A7 _TEXT	
+  NotMultiple  . . . . . . . . .	L Near	 000000C0 _TEXT	
 FlushConsoleInputBuffer  . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FormatMessageA . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetCommandLineA  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -257,8 +306,7 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000005A Public STDCALL
-  CalculateSequence  . . . . . .	L Near	 00000023 _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000008E Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -348,6 +396,7 @@ INVALID_HANDLE_VALUE . . . . . .	Number	 -00000001h
 KBDOWN_FLAG  . . . . . . . . . .	Number	 00000001h   
 KEY_EVENT  . . . . . . . . . . .	Number	 00000001h   
 KEY_MASKS  . . . . . . . . . . .	Number	 0000001Fh   
+K  . . . . . . . . . . . . . . .	DWord	 00000000 _BSS	
 LEFT_ALT_PRESSED . . . . . . . .	Number	 00000002h   
 LEFT_CTRL_PRESSED  . . . . . . .	Number	 00000008h   
 MB_ABORTRETRYIGNORE  . . . . . .	Number	 00000002h   
@@ -379,7 +428,7 @@ MOUSE_EVENT  . . . . . . . . . .	Number	 00000002h
 MessageBox . . . . . . . . . . .	Text   	 MessageBoxA
 NULL . . . . . . . . . . . . . .	Number	 00000000h   
 NUMLOCK_ON . . . . . . . . . . .	Number	 00000020h   
-N  . . . . . . . . . . . . . . .	Number	 0000002Fh   
+N  . . . . . . . . . . . . . . .	Number	 00000032h   
 OPEN_ALWAYS  . . . . . . . . . .	Number	 00000004h   
 OPEN_EXISTING  . . . . . . . . .	Number	 00000003h   
 PeekConsoleInput . . . . . . . .	Text   	 PeekConsoleInputA
@@ -478,12 +527,12 @@ VK_UP  . . . . . . . . . . . . .	Number	 00000026h
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
+bArray . . . . . . . . . . . . .	Byte	 00000000 _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
-fibonacciSequence  . . . . . . .	DWord	 00000000 _BSS	
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
@@ -493,6 +542,8 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
+partOne  . . . . . . . . . . . .	Byte	 00000032 _DATA	
+partTwo  . . . . . . . . . . . .	Byte	 00000044 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
