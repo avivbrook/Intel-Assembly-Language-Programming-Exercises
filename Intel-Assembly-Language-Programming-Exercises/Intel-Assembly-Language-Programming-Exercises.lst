@@ -1,11 +1,10 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 00:23:34
-Simple Addition (1					     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 08:35:57
+Simple Addition (2					     Page 1 - 1
 
 
-				TITLE Simple Addition (1)
-				; This program clears the screen, locates the cursor near the middle of
-				; the screen, prompts the user for two integers, adds the integers, and
-				; displays their sum.
+				TITLE Simple Addition (2)
+				; This program does the same thing as Simple Addition (1) but repeats it
+				; three times with a loop
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -53,43 +52,52 @@ Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 00:23:34
 
  00000000			.CODE
  00000000			main PROC
- 00000000  E8 00000000 E		call	Clrscr
- 00000005  B6 0C			mov	dh,12
- 00000007  B2 28			mov	dl,40
- 00000009  E8 00000000 E		call	Gotoxy
- 0000000E  BA 00000000 R		mov	edx,OFFSET prompt1
- 00000013  E8 00000000 E		call	Writestring
- 00000018  E8 00000000 E		call	Readint
- 0000001D  A3 00000000 R		mov	integer1,eax
- 00000022  B6 0D			mov	dh,13
- 00000024  B2 28			mov	dl,40
- 00000026  E8 00000000 E		call	Gotoxy
- 0000002B  BA 0000001A R		mov	edx,OFFSET prompt2
- 00000030  E8 00000000 E		call	WriteString
- 00000035  E8 00000000 E		call	Readint
- 0000003A  A3 00000004 R		mov	integer2,eax
-
- 0000003F  A1 00000000 R		mov	eax,integer1
- 00000044  03 05 00000004 R		add	eax,integer2
- 0000004A  A3 00000008 R		mov	sum,eax
-
- 0000004F  B6 0F			mov	dh,15
- 00000051  B2 24			mov	dl,36
- 00000053  E8 00000000 E		call	Gotoxy
- 00000058  BA 00000035 R		mov	edx,OFFSET result
- 0000005D  E8 00000000 E		call	Writestring
- 00000062  A1 00000008 R		mov	eax,sum
- 00000067  E8 00000000 E		call	Writeint
- 0000006C  E8 00000000 E		call	Crlf
- 00000071  B6 11			mov	dh,17
- 00000073  B2 28			mov	dl,40
- 00000075  E8 00000000 E		call	Gotoxy
-
+ 00000000  B9 00000003			mov	ecx,3
+ 00000005			RunProgram:
+ 00000005  E8 0000004E			call	GetInput
+ 0000000A  A1 00000000 R		mov	eax,integer1
+ 0000000F  03 05 00000004 R		add	eax,integer2
+ 00000015  A3 00000008 R		mov	sum,eax
+ 0000001A  B6 0F			mov	dh,15
+ 0000001C  B2 24			mov	dl,36
+ 0000001E  E8 00000000 E		call	Gotoxy
+ 00000023  BA 00000035 R		mov	edx,OFFSET result
+ 00000028  E8 00000000 E		call	Writestring
+ 0000002D  A1 00000008 R		mov	eax,sum
+ 00000032  E8 00000000 E		call	Writeint
+ 00000037  E8 00000000 E		call	Crlf
+ 0000003C  B6 11			mov	dh,17
+ 0000003E  B2 28			mov	dl,40
+ 00000040  E8 00000000 E		call	Gotoxy
+ 00000045  83 F9 01			cmp	ecx,1
+ 00000048  74 07			je next
+ 0000004A  E8 00000000 E		call WaitMsg
+ 0000004F  E2 B4		loop RunProgram
+ 00000051			next:
 					exit
- 00000081			main ENDP
+ 00000058			main ENDP
+
+ 00000058			GetInput PROC
+ 00000058  E8 00000000 E		call	Clrscr
+ 0000005D  B6 0C			mov	dh,12
+ 0000005F  B2 28			mov	dl,40
+ 00000061  E8 00000000 E		call	Gotoxy
+ 00000066  BA 00000000 R		mov	edx,OFFSET prompt1
+ 0000006B  E8 00000000 E		call	Writestring
+ 00000070  E8 00000000 E		call	Readint
+ 00000075  A3 00000000 R		mov	integer1,eax
+ 0000007A  B6 0D			mov	dh,13
+ 0000007C  B2 28			mov	dl,40
+ 0000007E  E8 00000000 E		call	Gotoxy
+ 00000083  BA 0000001A R		mov	edx,OFFSET prompt2
+ 00000088  E8 00000000 E		call	WriteString
+ 0000008D  E8 00000000 E		call	Readint
+ 00000092  A3 00000004 R		mov	integer2,eax
+ 00000097  C3				ret
+ 00000098			GetInput ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 00:23:34
-Simple Addition (1					     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 08:35:57
+Simple Addition (2					     Symbols 2 - 1
 
 
 
@@ -184,7 +192,7 @@ FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
 _BSS . . . . . . . . . . . . . .	32 Bit	 0000000C Para	  Public  'BSS'  
 _DATA  . . . . . . . . . . . . .	32 Bit	 00000056 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000081 Para	  Public  'CODE'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000098 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -213,6 +221,7 @@ GetConsoleMode . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 GetConsoleScreenBufferInfo . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetDateTime  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetFileTime  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetInput . . . . . . . . . . . .	P Near	 00000058 _TEXT	Length= 00000040 Public STDCALL
 GetKeyState  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetLastError . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetLocalTime . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -291,7 +300,9 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000081 Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000058 Public STDCALL
+  RunProgram . . . . . . . . . .	L Near	 00000005 _TEXT	
+  next . . . . . . . . . . . . .	L Near	 00000051 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
