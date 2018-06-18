@@ -1,10 +1,10 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 09:15:10
-BetterRandomRange Procedur				     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 09:56:34
+Random String						     Page 1 - 1
 
 
-				TITLE BetterRandomRange Procedure
-				; This program showcases the BetterRandomRange procedure, an improved
-				; version of the RandomRange procedure.
+				TITLE Random Strings
+				; This program showcases the RandomString procedure, which generates a
+				; random string of length L.
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -24,40 +24,51 @@ Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 09:15:10
 			      C .LIST
 			      C 
 
- = 00000032			NUMBER_OF_CALLS = 50
+ = 00000014			NUMBER_OF_STRINGS = 20
+ = 00000007			L = 7
 
- 00000000			.DATA
- 00000000 FFFFFED4		M	DWORD	-300
- 00000004 00000064		N	DWORD	100
+ 00000000			.DATA?
+ 00000000  00000007 [		randomString	BYTE		L DUP (?)
+	    00
+	   ]
 
  00000000			.CODE
  00000000			main PROC
  00000000  E8 00000000 E		call	Clrscr
- 00000005  A1 00000004 R		mov	eax,N
- 0000000A  8B 1D 00000000 R		mov	ebx,M
- 00000010  B9 00000032			mov	ecx,NUMBER_OF_CALLS
- 00000015			GenerateValues:
- 00000015  E8 00000009			call BetterRandomRange
- 0000001A  E2 F9		loop GenerateValues
+ 00000005  B8 00000007			mov	eax,L
+ 0000000A  BE 00000000 R		mov	esi,OFFSET randomString
+ 0000000F  B9 00000014			mov	ecx,NUMBER_OF_STRINGS
+ 00000014			GenerateStrings:
+ 00000014  E8 00000018			call	GenerateRandomString
+ 00000019  BA 00000000 R		mov	edx,OFFSET randomString
+ 0000001E  E8 00000000 E		call	Writestring
+ 00000023  E8 00000000 E		call	Crlf
+ 00000028  E2 EA		loop GenerateStrings
 					exit
- 00000023			main ENDP
+ 00000031			main ENDP
 
-				; This procedure is a improved version fo the RandomRange procedure.
-				; Instead of generating a pseudorandom integer between 0 and N - 1, it
-				; generates an integer between M ands N - 1
-				; Receives: EBX = M (lower range), EAX = N (upper range)
-				; Returns: EAX = psuedorandom value
- 00000023			BetterRandomRange PROC USES eax ebx
- 00000025  2B C3			sub	eax,ebx
- 00000027  E8 00000000 E		call	RandomRange
- 0000002C  03 C3			add	eax,ebx
- 0000002E  E8 00000000 E		call	Writeint
- 00000033  E8 00000000 E		call	Crlf
+				; Generates a random string of length L.
+				; Receives:	EAX =	L (string length)
+				;			ESI =	pointer to array of bytes that will hold the
+				;					random string
+				; Returns:	randomString = the pseudorandomly generated string
+ 00000031			GenerateRandomString PROC USES eax ecx esi
+ 00000034  8B C8			mov	ecx,eax
+ 00000036			GenerateChar:
+ 00000036  B8 0000005B			mov	eax,91
+ 0000003B  83 E8 41			sub	eax,65
+ 0000003E  E8 00000000 E		call	RandomRange
+ 00000043  83 C0 41			add	eax,65
+ 00000046  89 06			mov	[esi],eax
+ 00000048  46				inc	esi
+ 00000049  E2 EB		loop GenerateChar
+ 0000004B  B8 00000000			mov	eax,0
+ 00000050  89 06			mov	[esi],eax
 					ret
- 0000003B			BetterRandomRange ENDP
+ 00000056			GenerateRandomString ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 09:15:10
-BetterRandomRange Procedur				     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 09:56:34
+Random String						     Symbols 2 - 1
 
 
 
@@ -150,15 +161,15 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000008 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 0000003B Para	  Public  'CODE'	
+_BSS . . . . . . . . . . . . . .	32 Bit	 00000007 Para	  Public  'BSS'  
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000000 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000056 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
 
                 N a m e                 Type     Value    Attr
 
-BetterRandomRange  . . . . . . .	P Near	 00000023 _TEXT	Length= 00000018 Public STDCALL
 CloseFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 CloseHandle  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Clrscr . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -173,6 +184,8 @@ FileTimeToDosDateTime  . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 FileTimeToSystemTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FlushConsoleInputBuffer  . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FormatMessageA . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GenerateRandomString . . . . . .	P Near	 00000031 _TEXT	Length= 00000025 Public STDCALL
+  GenerateChar . . . . . . . . .	L Near	 00000036 _TEXT	
 GetCommandLineA  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetCommandTail . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetConsoleCP . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -259,8 +272,8 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000023 Public STDCALL
-  GenerateValues . . . . . . . .	L Near	 00000015 _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000031 Public STDCALL
+  GenerateStrings  . . . . . . .	L Near	 00000014 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -352,6 +365,7 @@ KEY_EVENT  . . . . . . . . . . .	Number	 00000001h
 KEY_MASKS  . . . . . . . . . . .	Number	 0000001Fh   
 LEFT_ALT_PRESSED . . . . . . . .	Number	 00000002h   
 LEFT_CTRL_PRESSED  . . . . . . .	Number	 00000008h   
+L  . . . . . . . . . . . . . . .	Number	 00000007h   
 MB_ABORTRETRYIGNORE  . . . . . .	Number	 00000002h   
 MB_APPLMODAL . . . . . . . . . .	Number	 00000000h   
 MB_CANCELTRYCONTINUE . . . . . .	Number	 00000006h   
@@ -379,11 +393,9 @@ MB_YESNO . . . . . . . . . . . .	Number	 00000004h
 MENU_EVENT . . . . . . . . . . .	Number	 00000008h   
 MOUSE_EVENT  . . . . . . . . . .	Number	 00000002h   
 MessageBox . . . . . . . . . . .	Text   	 MessageBoxA
-M  . . . . . . . . . . . . . . .	DWord	 00000000 _DATA	
 NULL . . . . . . . . . . . . . .	Number	 00000000h   
-NUMBER_OF_CALLS  . . . . . . . .	Number	 00000032h   
+NUMBER_OF_STRINGS  . . . . . . .	Number	 00000014h   
 NUMLOCK_ON . . . . . . . . . . .	Number	 00000020h   
-N  . . . . . . . . . . . . . . .	DWord	 00000004 _DATA	
 OPEN_ALWAYS  . . . . . . . . . .	Number	 00000004h   
 OPEN_EXISTING  . . . . . . . . .	Number	 00000003h   
 PeekConsoleInput . . . . . . . .	Text   	 PeekConsoleInputA
@@ -496,6 +508,7 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
+randomString . . . . . . . . . .	Byte	 00000000 _BSS	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA

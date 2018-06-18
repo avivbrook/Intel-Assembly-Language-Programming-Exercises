@@ -21,11 +21,11 @@ loop GenerateValues
 	exit
 main ENDP
 
-; This procedure is a improved version fo the RandomRange procedure.
+; This procedure is a improved version of the RandomRange procedure.
 ; Instead of generating a pseudorandom integer between 0 and N - 1, it
 ; generates an integer between M ands N - 1
-; Receives: EBX = M (lower range), EAX = N (upper range)
-; Returns: EAX = psuedorandom value
+; Receives:	EBX = M (lower range),	EAX = N (upper range)
+; Returns:	EAX = psuedorandom value
 BetterRandomRange PROC USES eax ebx
 	sub	eax,ebx
 	call	RandomRange
