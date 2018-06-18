@@ -1,10 +1,9 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 10:52:53
-Random Screen Locatio					     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 13:29:00
+Recursive Procedur					     Page 1 - 1
 
 
-				TITLE Random Screen Location
-				; This program displays a single character at 100 random screen locations,
-				; using a timing delay of 100 milliseconds.
+				TITLE Recursive Procedure
+				; This program calls a recursive procedure.
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -24,40 +23,31 @@ Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 10:52:53
 			      C .LIST
 			      C 
 
- = 00000064			NUMBER_OF_CHARS = 100
-
- 00000000			.DATA
- 00000000 41			char	BYTE	'A'
+ = 0000000A			NUMBER_OF_CALLS = 10
 
  00000000			.DATA?
- 00000000 00			rows	BYTE	?
- 00000001 00			cols	BYTE	?
+ 00000000 00000000		counter	DWORD	?
 
  00000000			.CODE
  00000000			main PROC
- 00000000  E8 00000000 E		call	GetMaxXY
- 00000005  B9 00000064			mov	ecx,NUMBER_OF_CHARS
- 0000000A			GenerateCharsAndPrint:
- 0000000A  E8 00000009			call	RandomScreenLocation
- 0000000F  E2 F9		loop GenerateCharsAndPrint
+ 00000000  C7 05 00000000 R		mov	counter,0
+	   00000000
+ 0000000A  B9 0000000A			mov	ecx,NUMBER_OF_CALLS
+ 0000000F  E8 00000007			call RecursiveProcedure
 					exit
- 00000018			main ENDP
+ 0000001B			main ENDP
 
- 00000018			RandomScreenLocation PROC USES eax edx
- 0000001A  0F B6 C0			movzx	eax,al
- 0000001D  E8 00000000 E		call		RandomRange
- 00000022  8A F0			mov		dh,al
- 00000024  0F B6 C2			movzx	eax,dl
- 00000027  E8 00000000 E		call		RandomRange
- 0000002C  8A D0			mov		dl,al
- 0000002E  E8 00000000 E		call		Gotoxy
- 00000033  A0 00000000 R		mov		al,char
- 00000038  E8 00000000 E		call		WriteChar
-					ret
- 00000040			RandomScreenLocation ENDP
+ 0000001B			RecursiveProcedure PROC
+ 0000001B  FF 05 00000000 R		inc	counter
+ 00000021  39 0D 00000000 R		cmp	counter,ecx
+ 00000027  74 05			jz	quit
+ 00000029  E8 FFFFFFED			call	RecursiveProcedure
+ 0000002E			quit:
+ 0000002E  C3				ret
+ 0000002F			RecursiveProcedure ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 10:52:53
-Random Screen Locatio					     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 13:29:00
+Recursive Procedur					     Symbols 2 - 1
 
 
 
@@ -150,9 +140,9 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_BSS . . . . . . . . . . . . . .	32 Bit	 00000002 Para	  Public  'BSS'  
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000001 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000040 Para	  Public  'CODE'	
+_BSS . . . . . . . . . . . . . .	32 Bit	 00000004 Para	  Public  'BSS'  
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000000 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000002F Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -209,7 +199,6 @@ ParseInteger32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 PeekConsoleInputA  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Random32 . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 RandomRange  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-RandomScreenLocation . . . . . .	P Near	 00000018 _TEXT	Length= 00000028 Public STDCALL
 Randomize  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadChar . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadConsoleA . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -223,6 +212,8 @@ ReadInt  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 ReadKeyFlush . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadKey  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadString . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+RecursiveProcedure . . . . . . .	P Near	 0000001B _TEXT	Length= 00000014 Public STDCALL
+  quit . . . . . . . . . . . . .	L Near	 0000002E _TEXT	
 SetConsoleCursorInfo . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 SetConsoleCursorPosition . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 SetConsoleMode . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -260,8 +251,7 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000018 Public STDCALL
-  GenerateCharsAndPrint  . . . .	L Near	 0000000A _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000001B Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -381,7 +371,7 @@ MENU_EVENT . . . . . . . . . . .	Number	 00000008h
 MOUSE_EVENT  . . . . . . . . . .	Number	 00000002h   
 MessageBox . . . . . . . . . . .	Text   	 MessageBoxA
 NULL . . . . . . . . . . . . . .	Number	 00000000h   
-NUMBER_OF_CHARS  . . . . . . . .	Number	 00000064h   
+NUMBER_OF_CALLS  . . . . . . . .	Number	 0000000Ah   
 NUMLOCK_ON . . . . . . . . . . .	Number	 00000020h   
 OPEN_ALWAYS  . . . . . . . . . .	Number	 00000004h   
 OPEN_EXISTING  . . . . . . . . .	Number	 00000003h   
@@ -484,8 +474,7 @@ WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
-char . . . . . . . . . . . . . .	Byte	 00000000 _DATA	
-cols . . . . . . . . . . . . . .	Byte	 00000001 _BSS	
+counter  . . . . . . . . . . . .	DWord	 00000000 _BSS	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
@@ -498,7 +487,6 @@ lightMagenta . . . . . . . . . .	Number	 0000000Dh
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-rows . . . . . . . . . . . . . .	Byte	 00000000 _BSS	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
