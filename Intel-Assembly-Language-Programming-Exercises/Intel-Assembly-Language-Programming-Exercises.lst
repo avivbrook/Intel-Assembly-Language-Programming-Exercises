@@ -1,11 +1,10 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 20:12:07
-!Shifting the Elements in an Arra			     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/17/18 23:46:34
+Draw Text Colour					     Page 1 - 1
 
 
-				TITLE Shifting the Elements in an Array
-				; This program rotates the numbers of a 32-bit integer array forward one
-				; position. The value at the end of the array wraps around to the first
-				; position.
+				TITLE Draw Text Colours
+				; This program displays the same string in four different colours, using
+				; the SetTextColor procedure from the Irvine32 link library and a loop.
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -26,58 +25,32 @@ Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 20:12:07
 			      C 
 
  00000000			.DATA
- 00000000 0000000A		intArray		DWORD	10,20,30,40
-	   00000014
-	   0000001E
-	   00000028
- 00000010 54 68 69 73 20	introduction	BYTE		"This is the original array:",0
-	   69 73 20 74 68
-	   65 20 6F 72 69
-	   67 69 6E 61 6C
-	   20 61 72 72 61
-	   79 3A 00
- 0000002C 54 68 69 73 20	conclusion	BYTE		"This is the shifted array:",0
-	   69 73 20 74 68
-	   65 20 73 68 69
-	   66 74 65 64 20
-	   61 72 72 61 79
-	   3A 00
+ 00000000 54 68 69 73 20	myString	BYTE	"This string will change colours!",0
+	   73 74 72 69 6E
+	   67 20 77 69 6C
+	   6C 20 63 68 61
+	   6E 67 65 20 63
+	   6F 6C 6F 75 72
+	   73 21 00
 
  00000000			.CODE
  00000000			main PROC
- 00000000  E8 00000000 E		call	Clrscr
- 00000005  BA 00000010 R		mov	edx,OFFSET introduction
- 0000000A  E8 00000000 E		call	Writestring
- 0000000F  E8 00000000 E		call	Crlf
- 00000014  BE 00000000 R		mov	esi,OFFSET intArray
- 00000019  B9 00000004			mov	ecx,LENGTHOF intArray
- 0000001E  BB 00000004			mov	ebx,TYPE intArray
- 00000023  E8 00000000 E		call	DumpMem
- 00000028  B9 00000003			mov	ecx,LENGTHOF intArray - 1
- 0000002D  8B 1D 00000000 R		mov	ebx,intArray[0]
- 00000033  BE 00000004			mov	esi,TYPE intArray
- 00000038			ShiftArrayElements:
- 00000038  8B C3			mov	eax,ebx
- 0000003A  8B 9E 00000000 R		mov	ebx,intArray[esi]
- 00000040  89 86 00000000 R		mov	intArray[esi],eax
- 00000046  83 C6 04			add	esi,TYPE intArray
- 00000049  E2 ED		loop ShiftArrayElements
- 0000004B  89 1D 00000000 R		mov	intArray[0],ebx
- 00000051  E8 00000000 E		call	Crlf
- 00000056  BA 0000002C R		mov	edx,OFFSET conclusion
- 0000005B  E8 00000000 E		call	Writestring
- 00000060  E8 00000000 E		call	Crlf
- 00000065  BE 00000000 R		mov	esi,OFFSET intArray
- 0000006A  B9 00000004			mov	ecx,LENGTHOF intArray
- 0000006F  BB 00000004			mov	ebx,TYPE intArray
- 00000074  E8 00000000 E		call	DumpMem
- 00000079  E8 00000000 E		call	Crlf
-
+ 00000000  B8 0000001C			mov	eax,lightRed + (blue * 16)
+ 00000005  E8 00000000 E		call	SetTextColor
+ 0000000A  E8 00000000 E		call	Clrscr
+ 0000000F  B9 00000004			mov	ecx,4
+ 00000014			ChangeColours:
+ 00000014  E8 00000000 E		call	SetTextColor
+ 00000019  BA 00000000 R		mov	edx,OFFSET myString
+ 0000001E  E8 00000000 E		call	Writestring
+ 00000023  E8 00000000 E		call	Crlf
+ 00000028  83 C0 01			add	eax,1
+ 0000002B  E2 E7		loop ChangeColours
 					exit
- 00000085			main ENDP
+ 00000034			main ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/16/18 20:12:07
-!Shifting the Elements in an Arra			     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/17/18 23:46:34
+Draw Text Colour					     Symbols 2 - 1
 
 
 
@@ -170,8 +143,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000047 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000085 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000021 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000034 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -278,8 +251,8 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000085 Public STDCALL
-  ShiftArrayElements . . . . . .	L Near	 00000038 _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000034 Public STDCALL
+  ChangeColours  . . . . . . . .	L Near	 00000014 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -501,13 +474,10 @@ WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
-conclusion . . . . . . . . . . .	Byte	 0000002C _DATA	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
-intArray . . . . . . . . . . . .	DWord	 00000000 _DATA	
-introduction . . . . . . . . . .	Byte	 00000010 _DATA	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
@@ -515,6 +485,7 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
+myString . . . . . . . . . . . .	Byte	 00000000 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA

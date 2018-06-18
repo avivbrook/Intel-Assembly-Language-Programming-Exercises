@@ -19,6 +19,9 @@
     <Filter Include="Source Files\Chapter4">
       <UniqueIdentifier>{aa1b131b-eabe-4284-b37d-49cbba044fe7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Chapter5">
+      <UniqueIdentifier>{d2eba451-30e9-4a5b-a1f6-305d17929c22}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="3_1_IntegerExpressionCalculation.asm">
@@ -50,6 +53,9 @@
     </MASM>
     <MASM Include="4_8_ShiftingtheElementsinanArray.asm">
       <Filter>Source Files\Chapter4</Filter>
+    </MASM>
+    <MASM Include="5_1_DrawTextColours.asm">
+      <Filter>Source Files\Chapter5</Filter>
     </MASM>
   </ItemGroup>
 </Project>
