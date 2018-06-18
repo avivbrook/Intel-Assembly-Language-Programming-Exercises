@@ -81,5 +81,8 @@
     <MASM Include="5_9_RecursiveProcedure.asm">
       <Filter>Source Files\Chapter5</Filter>
     </MASM>
+    <MASM Include="5_10_FibonacciGenerator.asm">
+      <Filter>Source Files\Chapter5</Filter>
+    </MASM>
   </ItemGroup>
 </Project>

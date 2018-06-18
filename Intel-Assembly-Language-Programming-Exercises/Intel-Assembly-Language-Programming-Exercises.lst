@@ -1,9 +1,10 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 13:29:00
-Recursive Procedur					     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 13:38:06
+Fibonacci Generato					     Page 1 - 1
 
 
-				TITLE Recursive Procedure
-				; This program calls a recursive procedure.
+				TITLE Fibonacci Generator
+				; This program produces N values of the Fibonacci number series and stores
+				; them in an array of doubleword.
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -23,31 +24,38 @@ Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 13:29:00
 			      C .LIST
 			      C 
 
- = 0000000A			NUMBER_OF_CALLS = 10
+ = 0000002F			N = 47
 
  00000000			.DATA?
- 00000000 00000000		counter	DWORD	?
+ 00000000  0000002F [		fibonacciSequence	DWORD	N DUP(?)
+	    00000000
+	   ]
 
  00000000			.CODE
  00000000			main PROC
- 00000000  C7 05 00000000 R		mov	counter,0
-	   00000000
- 0000000A  B9 0000000A			mov	ecx,NUMBER_OF_CALLS
- 0000000F  E8 00000007			call RecursiveProcedure
+ 00000000  E8 00000000 E		call	Clrscr
+ 00000005  C7 05 00000000 R		mov	fibonacciSequence[0],1
+	   00000001
+ 0000000F  C7 05 00000004 R		mov	fibonacciSequence[4],1
+	   00000001
+ 00000019  B9 0000002D			mov	ecx,N - 2
+ 0000001E  BE 00000008			mov	esi,2 * TYPE DWORD
+ 00000023			CalculateSequence:
+ 00000023  8B 86 FFFFFFFC R		mov	eax,fibonacciSequence[esi - TYPE DWORD]
+ 00000029  03 86 FFFFFFF8 R		add	eax,fibonacciSequence[esi - 2 * TYPE DWORD]
+ 0000002F  89 86 00000000 R		mov	fibonacciSequence[esi],eax
+ 00000035  83 C6 04			add	esi,TYPE DWORD
+ 00000038  E2 E9		loop CalculateSequence
+ 0000003A  BE 00000000 R		mov	esi,OFFSET fibonacciSequence
+ 0000003F  B9 0000002F			mov	ecx,LENGTHOF fibonacciSequence
+ 00000044  BB 00000004			mov	ebx,TYPE fibonacciSequence
+ 00000049  E8 00000000 E		call DumpMem
+ 0000004E  E8 00000000 E		call	Crlf
 					exit
- 0000001B			main ENDP
-
- 0000001B			RecursiveProcedure PROC
- 0000001B  FF 05 00000000 R		inc	counter
- 00000021  39 0D 00000000 R		cmp	counter,ecx
- 00000027  74 05			jz	quit
- 00000029  E8 FFFFFFED			call	RecursiveProcedure
- 0000002E			quit:
- 0000002E  C3				ret
- 0000002F			RecursiveProcedure ENDP
+ 0000005A			main ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 13:29:00
-Recursive Procedur					     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 13:38:06
+Fibonacci Generato					     Symbols 2 - 1
 
 
 
@@ -140,9 +148,9 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_BSS . . . . . . . . . . . . . .	32 Bit	 00000004 Para	  Public  'BSS'  
+_BSS . . . . . . . . . . . . . .	32 Bit	 000000BC Para	  Public  'BSS'  
 _DATA  . . . . . . . . . . . . .	32 Bit	 00000000 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 0000002F Para	  Public  'CODE'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000005A Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -212,8 +220,6 @@ ReadInt  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 ReadKeyFlush . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadKey  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ReadString . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-RecursiveProcedure . . . . . . .	P Near	 0000001B _TEXT	Length= 00000014 Public STDCALL
-  quit . . . . . . . . . . . . .	L Near	 0000002E _TEXT	
 SetConsoleCursorInfo . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 SetConsoleCursorPosition . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 SetConsoleMode . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -251,7 +257,8 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000001B Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000005A Public STDCALL
+  CalculateSequence  . . . . . .	L Near	 00000023 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -371,8 +378,8 @@ MENU_EVENT . . . . . . . . . . .	Number	 00000008h
 MOUSE_EVENT  . . . . . . . . . .	Number	 00000002h   
 MessageBox . . . . . . . . . . .	Text   	 MessageBoxA
 NULL . . . . . . . . . . . . . .	Number	 00000000h   
-NUMBER_OF_CALLS  . . . . . . . .	Number	 0000000Ah   
 NUMLOCK_ON . . . . . . . . . . .	Number	 00000020h   
+N  . . . . . . . . . . . . . . .	Number	 0000002Fh   
 OPEN_ALWAYS  . . . . . . . . . .	Number	 00000004h   
 OPEN_EXISTING  . . . . . . . . .	Number	 00000003h   
 PeekConsoleInput . . . . . . . .	Text   	 PeekConsoleInputA
@@ -474,9 +481,9 @@ WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
-counter  . . . . . . . . . . . .	DWord	 00000000 _BSS	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
+fibonacciSequence  . . . . . . .	DWord	 00000000 _BSS	
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
