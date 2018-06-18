@@ -1,12 +1,11 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 00:12:47
-Linking Array Item					     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 00:23:34
+Simple Addition (1					     Page 1 - 1
 
 
-				TITLE Linking Array Items
-				; Given the starting index in a list, an array of characters, and an array
-				; of link index, this program traverses the links and locates the
-				; characters in their correct sequence. Each character the program
-				; locates is then copied to a new array.
+				TITLE Simple Addition (1)
+				; This program clears the screen, locates the cursor near the middle of
+				; the screen, prompts the user for two integers, adds the integers, and
+				; displays their sum.
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -27,49 +26,70 @@ Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 00:12:47
 			      C 
 
  00000000			.DATA
- 00000000 00000001		start		DWORD	1
- 00000004 48 41 43 45 42	chars		BYTE		'H','A','C','E','B','D','F','G'
-	   44 46 47
- 0000000C 00000000		links		DWORD	0,4,5,6,2,3,7,0
-	   00000004
-	   00000005
-	   00000006
-	   00000002
-	   00000003
-	   00000007
-	   00000000
- 0000002C 04			linksType		BYTE		TYPE links
+ 00000000 45 6E 74 65 72	prompt1	BYTE		"Enter the first integer: ",0
+	   20 74 68 65 20
+	   66 69 72 73 74
+	   20 69 6E 74 65
+	   67 65 72 3A 20
+	   00
+ 0000001A 45 6E 74 65 72	prompt2	BYTE		"Enter the second integer: ",0
+	   20 74 68 65 20
+	   73 65 63 6F 6E
+	   64 20 69 6E 74
+	   65 67 65 72 3A
+	   20 00
+ 00000035 54 68 65 20 73	result	BYTE		"The sum of the two integers is: ",0
+	   75 6D 20 6F 66
+	   20 74 68 65 20
+	   74 77 6F 20 69
+	   6E 74 65 67 65
+	   72 73 20 69 73
+	   3A 20 00
 
  00000000			.DATA?
- 00000000  00000008 [		outputArray	BYTE		LENGTHOF chars DUP(?)
-	    00
-	   ]
+ 00000000 00000000		integer1	DWORD	?
+ 00000004 00000000		integer2	DWORD	?
+ 00000008 00000000		sum		DWORD	?
 
  00000000			.CODE
- 00000000			main	PROC
- 00000000  B9 00000008			mov	ecx,LENGTHOF outputArray
- 00000005  BF 00000000 R		mov	edi,OFFSET outputArray
- 0000000A			TraverseLinks:
- 0000000A  BE 00000004 R		mov	esi,OFFSET chars
- 0000000F  03 35 00000000 R		add	esi,start
- 00000015  8A 06			mov	al,[esi]
- 00000017  88 07			mov	[edi],al
+ 00000000			main PROC
+ 00000000  E8 00000000 E		call	Clrscr
+ 00000005  B6 0C			mov	dh,12
+ 00000007  B2 28			mov	dl,40
+ 00000009  E8 00000000 E		call	Gotoxy
+ 0000000E  BA 00000000 R		mov	edx,OFFSET prompt1
+ 00000013  E8 00000000 E		call	Writestring
+ 00000018  E8 00000000 E		call	Readint
+ 0000001D  A3 00000000 R		mov	integer1,eax
+ 00000022  B6 0D			mov	dh,13
+ 00000024  B2 28			mov	dl,40
+ 00000026  E8 00000000 E		call	Gotoxy
+ 0000002B  BA 0000001A R		mov	edx,OFFSET prompt2
+ 00000030  E8 00000000 E		call	WriteString
+ 00000035  E8 00000000 E		call	Readint
+ 0000003A  A3 00000004 R		mov	integer2,eax
 
- 00000019  BA 0000000C R		mov	edx,OFFSET links
- 0000001E  A1 00000000 R		mov	eax,start
- 00000023  F6 25 0000002C R		mul	linksType
- 00000029  A3 00000000 R		mov	start,eax
- 0000002E  03 15 00000000 R		add	edx,start
- 00000034  8B 02			mov	eax,[edx]
- 00000036  A3 00000000 R		mov	start,eax
- 0000003B  47				inc	edi
- 0000003C  E2 CC		loop TraverseLinks
+ 0000003F  A1 00000000 R		mov	eax,integer1
+ 00000044  03 05 00000004 R		add	eax,integer2
+ 0000004A  A3 00000008 R		mov	sum,eax
+
+ 0000004F  B6 0F			mov	dh,15
+ 00000051  B2 24			mov	dl,36
+ 00000053  E8 00000000 E		call	Gotoxy
+ 00000058  BA 00000035 R		mov	edx,OFFSET result
+ 0000005D  E8 00000000 E		call	Writestring
+ 00000062  A1 00000008 R		mov	eax,sum
+ 00000067  E8 00000000 E		call	Writeint
+ 0000006C  E8 00000000 E		call	Crlf
+ 00000071  B6 11			mov	dh,17
+ 00000073  B2 28			mov	dl,40
+ 00000075  E8 00000000 E		call	Gotoxy
 
 					exit
- 00000045			main	ENDP
+ 00000081			main ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 00:12:47
-Linking Array Item					     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 00:23:34
+Simple Addition (1					     Symbols 2 - 1
 
 
 
@@ -162,9 +182,9 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_BSS . . . . . . . . . . . . . .	32 Bit	 00000008 Para	  Public  'BSS'  
-_DATA  . . . . . . . . . . . . .	32 Bit	 0000002D Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000045 Para	  Public  'CODE'	
+_BSS . . . . . . . . . . . . . .	32 Bit	 0000000C Para	  Public  'BSS'  
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000056 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000081 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -271,8 +291,7 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000045 Public STDCALL
-  TraverseLinks  . . . . . . . .	L Near	 0000000A _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000081 Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -494,23 +513,24 @@ WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
-chars  . . . . . . . . . . . . .	Byte	 00000004 _DATA	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
+integer1 . . . . . . . . . . . .	DWord	 00000000 _BSS	
+integer2 . . . . . . . . . . . .	DWord	 00000004 _BSS	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
 lightGreen . . . . . . . . . . .	Number	 0000000Ah   
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
-linksType  . . . . . . . . . . .	Byte	 0000002C _DATA	
-links  . . . . . . . . . . . . .	DWord	 0000000C _DATA	
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-outputArray  . . . . . . . . . .	Byte	 00000000 _BSS	
+prompt1  . . . . . . . . . . . .	Byte	 00000000 _DATA	
+prompt2  . . . . . . . . . . . .	Byte	 0000001A _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-start  . . . . . . . . . . . . .	DWord	 00000000 _DATA	
+result . . . . . . . . . . . . .	Byte	 00000035 _DATA	
+sum  . . . . . . . . . . . . . .	DWord	 00000008 _BSS	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
