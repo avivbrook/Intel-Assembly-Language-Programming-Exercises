@@ -82,5 +82,8 @@
     <MASM Include="5_11_FindingMultiplesofK.asm">
       <Filter>Source Files\Chapter5</Filter>
     </MASM>
+    <MASM Include="6_1_FillinganArray.asm">
+      <Filter>Source Files\Chapter6</Filter>
+    </MASM>
   </ItemGroup>
 </Project>
