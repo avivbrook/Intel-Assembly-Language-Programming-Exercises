@@ -1,9 +1,9 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 17:20:38
-Filling an Arra					     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/19/18 16:06:05
+!Summing Array Elements in a Rang			     Page 1 - 1
 
 
-				TITLE Filling an Array
-
+				TITLE Summing Array Elements in a Range
+				; This program calls the SumArrayElementsInRange procedure twice.
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -23,77 +23,65 @@ Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 17:20:38
 			      C .LIST
 			      C 
 
- = 00000007			N = 7
-
  00000000			.DATA
- 00000000 4C 6F 77 65 73	promptj	BYTE		"Lowest value in range: ",0
-	   74 20 76 61 6C
-	   75 65 20 69 6E
-	   20 72 61 6E 67
-	   65 3A 20 00
- 00000018 48 69 67 68 65	promptk	BYTE		"Highest value in range: ",0
-	   73 74 20 76 61
-	   6C 75 65 20 69
-	   6E 20 72 61 6E
-	   67 65 3A 20 00
+ 00000000 D1EFB5CB		myArray	SDWORD	0D1EFB5CBh,3E3000h,40100Ah,19FF84h,19FF94h,246h
+	   003E3000
+	   0040100A
+	   0019FF84
+	   0019FF94
+	   00000246
 
  00000000			.DATA?
- 00000000  00000007 [		dArray	DWORD	N DUP(?)
-	    00000000
-	   ]
- 0000001C 00000000		j		DWORD	?
- 00000020 00000000		k		DWORD	?
+ 00000000 00000000		j		SDWORD	?
+ 00000004 00000000		k		SDWORD	?
 
  00000000			.CODE
  00000000			main PROC
  00000000  E8 00000000 E		call	Clrscr
- 00000005  E8 0000003E			call	GetInput
- 0000000A  E8 00000066			call	FillArray
- 0000000F  BE 00000000 R		mov	esi,OFFSET dArray
- 00000014  B9 00000007			mov	ecx,N
- 00000019  BB 00000004			mov	ebx,TYPE dArray
- 0000001E  E8 00000000 E		call	DumpMem
- 00000023  E8 00000020			call	GetInput
- 00000028  E8 00000048			call	FillArray
- 0000002D  BE 00000000 R		mov	esi,OFFSET dArray
- 00000032  B9 00000007			mov	ecx,N
- 00000037  BB 00000004			mov	ebx,TYPE dArray
- 0000003C  E8 00000000 E		call	DumpMem
+ 00000005  BE 00000000 R		mov	esi,OFFSET myArray		; pointer to the array
+ 0000000A  B9 00000006			mov	ecx,LENGTHOF myArray	; length of the array
+
+					; First test range: only the first and last elements will be added
+					; 0D1EFB5CBh + 246h = 0D1EFB811
+ 0000000F  C7 05 00000000 R		mov	j,0D050F800h
+	   D050F800
+ 00000019  C7 05 00000004 R		mov	k,3E8h
+	   000003E8
+ 00000023  E8 00000020			call	SumArrayElementsInRange
+
+					; Second test range: all but the first element will be added
+					; 3E3000h + 40100Ah + 19FF84h + 19FF94h + 246h = 0B24168h
+ 00000028  C7 05 00000000 R		mov	j,246h
+	   00000246
+ 00000032  C7 05 00000004 R		mov	k,40100Ah
+	   0040100A
+ 0000003C  E8 00000007			call	SumArrayElementsInRange
 					exit
- 00000048			main ENDP
+ 00000048			main	ENDP
 
-				; Returns:	N = number of array elements, j = low range, k = high range
- 00000048			GetInput PROC USES edx eax
- 0000004A  BA 00000000 R		mov	edx,OFFSET promptj
- 0000004F  E8 00000000 E		call	WriteString
- 00000054  E8 00000000 E		call	ReadInt
- 00000059  A3 0000001C R		mov	j,eax
- 0000005E  BA 00000018 R		mov	edx,OFFSET promptk
- 00000063  E8 00000000 E		call	WriteString
- 00000068  E8 00000000 E		call	ReadInt
- 0000006D  A3 00000020 R		mov	k,eax
+				; This procedure calculates the sum of all array elements falling within
+				; the range j...k (inclusive).
+				; Receives:	ESI = pointer to a signed doubleword array
+				;			ECX = the length of the array
+				;			j = lowest value, k = highest value
+				; Returns:	EAX = the sum
+ 00000048			SumArrayElementsInRange PROC USES esi ecx ebx
+ 0000004B  B8 00000000			mov	eax,0				; initialise EAX
+ 00000050			TraverseArray:					; loop to traverse array
+ 00000050  8B 1E			mov	ebx,SDWORD PTR [esi]	; EBX = current array element
+ 00000052  3B 1D 00000000 R		cmp	ebx,j				; EBX >= j ?
+ 00000058  7C 0A			jl	OutOfRange			; if not, jump to OutOfRange
+ 0000005A  3B 1D 00000004 R		cmp	ebx,k				; EBX <= k ?
+ 00000060  7F 02			jg	OutOfRange			; if not, jump to OutOfRange
+ 00000062  03 C3			add	eax,ebx				; if in range, add to EAX
+ 00000064			OutOfRange:
+ 00000064  83 C6 04			add	esi,TYPE myArray		; next element in array
+ 00000067  E2 E7			loop	TraverseArray
 					ret
- 00000075			GetInput ENDP
-
-				; Receives: ESI = pointer to array, N, j, k
- 00000075			FillArray PROC USES esi ecx eax ebx
- 00000079  BE 00000000 R		mov	esi,OFFSET dArray
- 0000007E  B9 00000007			mov	ecx,N
- 00000083			TraverseArray:
- 00000083  A1 00000020 R		mov	eax,k
- 00000088  8B 1D 0000001C R		mov	ebx,j
- 0000008E  2B C3			sub	eax,ebx
- 00000090  83 C0 01			add	eax,1
- 00000093  E8 00000000 E		call	RandomRange
- 00000098  03 05 0000001C R		add	eax,j
- 0000009E  89 06			mov	[esi],eax
- 000000A0  83 C6 04			add	esi,TYPE dArray
- 000000A3  E2 DE		loop TraverseArray
-					ret
- 000000AA			FillArray ENDP
+ 0000006D			SumArrayElementsInRange ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/18/18 17:20:38
-Filling an Arra					     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/19/18 16:06:05
+!Summing Array Elements in a Rang			     Symbols 2 - 1
 
 
 
@@ -186,9 +174,9 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_BSS . . . . . . . . . . . . . .	32 Bit	 00000024 Para	  Public  'BSS'  
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000031 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 000000AA Para	  Public  'CODE'	
+_BSS . . . . . . . . . . . . . .	32 Bit	 00000008 Para	  Public  'BSS'  
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000018 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000006D Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -207,8 +195,6 @@ DumpRegs . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 ExitProcess  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FileTimeToDosDateTime  . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FileTimeToSystemTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-FillArray  . . . . . . . . . . .	P Near	 00000075 _TEXT	Length= 00000035 Public STDCALL
-  TraverseArray  . . . . . . . .	L Near	 00000083 _TEXT	
 FlushConsoleInputBuffer  . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FormatMessageA . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetCommandLineA  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -219,7 +205,6 @@ GetConsoleMode . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 GetConsoleScreenBufferInfo . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetDateTime  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetFileTime  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-GetInput . . . . . . . . . . . .	P Near	 00000048 _TEXT	Length= 0000002D Public STDCALL
 GetKeyState  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetLastError . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetLocalTime . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -279,6 +264,9 @@ Str_copy . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 Str_length . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Str_trim . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Str_ucase  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SumArrayElementsInRange  . . . .	P Near	 00000048 _TEXT	Length= 00000025 Public STDCALL
+  TraverseArray  . . . . . . . .	L Near	 00000050 _TEXT	
+  OutOfRange . . . . . . . . . .	L Near	 00000064 _TEXT	
 SystemTimeToFileTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WaitMsg  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteBinB  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -419,7 +407,6 @@ MOUSE_EVENT  . . . . . . . . . .	Number	 00000002h
 MessageBox . . . . . . . . . . .	Text   	 MessageBoxA
 NULL . . . . . . . . . . . . . .	Number	 00000000h   
 NUMLOCK_ON . . . . . . . . . . .	Number	 00000020h   
-N  . . . . . . . . . . . . . . .	Number	 00000007h   
 OPEN_ALWAYS  . . . . . . . . . .	Number	 00000004h   
 OPEN_EXISTING  . . . . . . . . .	Number	 00000003h   
 PeekConsoleInput . . . . . . . .	Text   	 PeekConsoleInputA
@@ -522,12 +509,11 @@ black  . . . . . . . . . . . . .	Number	 00000000h
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
-dArray . . . . . . . . . . . . .	DWord	 00000000 _BSS	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
-j  . . . . . . . . . . . . . . .	DWord	 0000001C _BSS	
-k  . . . . . . . . . . . . . . .	DWord	 00000020 _BSS	
+j  . . . . . . . . . . . . . . .	DWord	 00000000 _BSS	
+k  . . . . . . . . . . . . . . .	DWord	 00000004 _BSS	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
@@ -535,8 +521,7 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-promptj  . . . . . . . . . . . .	Byte	 00000000 _DATA	
-promptk  . . . . . . . . . . . .	Byte	 00000018 _DATA	
+myArray  . . . . . . . . . . . .	DWord	 00000000 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA

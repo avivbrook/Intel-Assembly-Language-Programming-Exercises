@@ -85,5 +85,8 @@
     <MASM Include="6_1_FillinganArray.asm">
       <Filter>Source Files\Chapter6</Filter>
     </MASM>
+    <MASM Include="6_2_SummingArrayElementsinaRange.asm">
+      <Filter>Source Files\Chapter6</Filter>
+    </MASM>
   </ItemGroup>
 </Project>
