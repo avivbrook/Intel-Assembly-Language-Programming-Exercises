@@ -1,10 +1,10 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/20/18 10:50:15
-Display ASCII Decima					     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/20/18 12:01:33
+Extended Subtraction Procedur				     Page 1 - 1
 
 
-				TITLE Display ASCII Decimal
-				; This program passes three numbers of different sizes to the WriteScaled
-				; procedure, which outputs each of the numbers with a decimal point.
+				TITLE Extended Subtraction Procedure
+				; This program passes several pairs of integers, each at least 10 bytes
+				; long to the Extended_Sub procedure which then subtract them.
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -24,63 +24,85 @@ Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/20/18 10:50:15
 			      C .LIST
 			      C 
 
- = 00000005			DECIMAL_OFFSET = 5
-
  00000000			.DATA
- 00000000 31 30 30 31 32	decimal_one	BYTE	"100123456789765"
-	   33 34 35 36 37
-	   38 39 37 36 35
- 0000000F 34 34 34 31 34	decimal_two	BYTE	"444143474143"
-	   33 34 37 34 31
-	   34 33
- 0000001B 32 32 32 30 30	decimal_three	BYTE	"222001"
-	   31
+ 00000000 34 12 98 74 06	pair1op1	BYTE	34h,12h,98h,74h,06h,0A4h,0B2h,0A2h,56h,78h
+	   A4 B2 A2 56 78
+ 0000000A 02 45 23 00 00	pair1op2	BYTE	02h,45h,23h,00h,00h,87h,10h,80h,13h,24h
+	   87 10 80 13 24
+ 00000014 5B FC 6A 22 00	pair2op1	BYTE	5Bh,0FCh,6Ah,22h,00h,20h,70h,00h,00h,40h
+	   20 70 00 00 40
+ 0000001E 10 0A 00 40 10	pair2op2	BYTE	10h,0Ah,00h,40h,10h,0Ah,00h,40h,10h,0Ah
+	   0A 00 40 10 0A
+ 00000028  0000000B [		result	BYTE	11 DUP(0)
+	    00
+	   ]
 
  00000000			.CODE
  00000000			main PROC
- 00000000  BB 00000005			mov	ebx,DECIMAL_OFFSET
- 00000005  E8 00000000 E		call	Clrscr
- 0000000A  BA 00000000 R		mov	edx,OFFSET decimal_one
- 0000000F  B9 0000000F			mov	ecx,LENGTHOF decimal_one
- 00000014  E8 00000034			call	WriteScaled
- 00000019  E8 00000000 E		call	Crlf
- 0000001E  BA 0000000F R		mov	edx,OFFSET decimal_two
- 00000023  B9 0000000C			mov	ecx,LENGTHOF decimal_two
- 00000028  E8 00000020			call	WriteScaled
- 0000002D  E8 00000000 E		call	Crlf
- 00000032  BA 0000001B R		mov	edx,OFFSET decimal_three
- 00000037  B9 00000006			mov	ecx,LENGTHOF decimal_three
- 0000003C  E8 0000000C			call	WriteScaled
- 00000041  E8 00000000 E		call	Crlf
+ 00000000  BE 00000000 R		mov	esi,OFFSET pair1op1		; first operand
+ 00000005  BF 0000000A R		mov	edi,OFFSET pair1op2		; second operand
+ 0000000A  BB 00000028 R		mov	ebx,OFFSET result		; result operand
+ 0000000F  B9 0000000A			mov	ecx,LENGTHOF pair1op1	; number of bytes
+ 00000014  E8 00000048			call	Extended_Sub
+ 00000019  BE 00000028 R		mov	esi,OFFSET result		; display the result
+ 0000001E  B9 0000000B			mov	ecx,LENGTHOF result
+ 00000023  E8 00000050			call	Display_Result
+ 00000028  E8 00000000 E		call	Crlf
+ 0000002D  BE 00000014 R		mov	esi,OFFSET pair2op1		; first operand
+ 00000032  BF 0000001E R		mov	edi,OFFSET pair2op2		; second operand
+ 00000037  BB 00000028 R		mov	ebx,OFFSET result		; result operand
+ 0000003C  B9 0000000A			mov	ecx,LENGTHOF pair2op1	; number of bytes
+ 00000041  E8 0000001B			call	Extended_Sub
+ 00000046  BE 00000028 R		mov	esi,OFFSET result		; display the result
+ 0000004B  B9 0000000B			mov	ecx,LENGTHOF result
+ 00000050  E8 00000023			call	Display_Result
+ 00000055  E8 00000000 E		call	Crlf
 					exit
- 0000004D			main ENDP
+ 00000061			main ENDP
 
-				; This procedure outputs a decimal ASCII number with an implied decimal
-				; point.
-				; Receives:	EDX = number's offset, ECX = number's length
-				;			EBX  = decimal's offset
- 0000004D			WriteScaled PROC
- 0000004D  60				pushad
- 0000004E  2B CB			sub	ecx,ebx
- 00000050			WriteNumberBeforeDecimal:
- 00000050  8A 02			mov	al,[edx]
- 00000052  E8 00000000 E		call	WriteChar
- 00000057  42				inc	edx
- 00000058  E2 F6			loop	WriteNumberBeforeDecimal
- 0000005A  B0 2E			mov	al,'.'
- 0000005C  E8 00000000 E		call	WriteChar
- 00000061  8B CB			mov	ecx,ebx
- 00000063			WriteNumberAfterDecimal:
- 00000063  8A 02			mov	al,[edx]
- 00000065  E8 00000000 E		call	WriteChar
- 0000006A  42				inc	edx
- 0000006B  E2 F6			loop	WriteNumberAfterDecimal
- 0000006D  61				popad
- 0000006E  C3				ret
- 0000006F			WriteScaled ENDP
+				; This procedure subtracts two extended integers stored as arrays of bytes.
+				; Receives:	ESI and EDI point to the two integers,
+				;			EBX points to a variable that will hold the result,
+				;			ECX indicates the number of bytes to be subtracted
+ 00000061			Extended_Sub PROC
+ 00000061  60				pushad
+ 00000062  F8				clc		; clear the Carry flag
+ 00000063			SubtractEachByte:
+ 00000063  8A 06			mov	al,[esi]			; get the first integer
+ 00000065  1A 07			sbb	al,[edi]			; subtract the second integer
+ 00000067  9C				pushfd				; save the Carry flag
+ 00000068  88 03			mov	[ebx],al			; store partial result
+ 0000006A  46				inc	esi				; increment pointers
+ 0000006B  47				inc	edi
+ 0000006C  43				inc	ebx
+ 0000006D  9D				popfd				; restore the Carry flag
+ 0000006E  E2 F3			loop	SubtractEachByte
+ 00000070  C6 03 00			mov	BYTE PTR [ebx],0	; clear high byte of result
+ 00000073  80 1B 00			sbb	BYTE PTR [ebx],0	; subtract any leftover carry
+ 00000076  61				popad
+ 00000077  C3				ret
+ 00000078			Extended_Sub ENDP
+
+				; This procedure displays the result in its proper order, starting with
+				; the high-order byte, and working its way down to the low-order byte.
+				; Receives:	ESI points to a variable that contains the result,
+				;l			ECX indicates the number of bytes in the result
+ 00000078			Display_Result PROC
+ 00000078  60				pushad
+ 00000079  03 F1			add	esi,ecx			; point to the last array element
+ 0000007B  83 EE 01			sub	esi,TYPE BYTE
+ 0000007E  BB 00000001			mov	ebx,TYPE BYTE
+ 00000083			DisplayEachByte:
+ 00000083  8A 06			mov	al,[esi]			; get an array byte
+ 00000085  E8 00000000 E		call	WriteHexB			; display it
+ 0000008A  83 EE 01			sub	esi,TYPE BYTE		; point to the previous byte
+ 0000008D  E2 F4			loop	DisplayEachByte
+ 0000008F  61				popad
+ 00000090  C3				ret
+ 00000091			Display_Result ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/20/18 10:50:15
-Display ASCII Decima					     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/20/18 12:01:33
+Extended Subtraction Procedur				     Symbols 2 - 1
 
 
 
@@ -173,8 +195,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000021 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 0000006F Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000033 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000091 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -188,9 +210,13 @@ CreateFileA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 CreateOutputFile . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Crlf . . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Delay  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Display_Result . . . . . . . . .	P Near	 00000078 _TEXT	Length= 00000019 Public STDCALL
+  DisplayEachByte  . . . . . . .	L Near	 00000083 _TEXT	
 DumpMem  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 DumpRegs . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ExitProcess  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Extended_Sub . . . . . . . . . .	P Near	 00000061 _TEXT	Length= 00000017 Public STDCALL
+  SubtractEachByte . . . . . . .	L Near	 00000063 _TEXT	
 FileTimeToDosDateTime  . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FileTimeToSystemTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FlushConsoleInputBuffer  . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -276,15 +302,12 @@ WriteFloat . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteHexB  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteHex . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteInt . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-WriteScaled  . . . . . . . . . .	P Near	 0000004D _TEXT	Length= 00000022 Public STDCALL
-  WriteNumberBeforeDecimal . . .	L Near	 00000050 _TEXT	
-  WriteNumberAfterDecimal  . . .	L Near	 00000063 _TEXT	
 WriteStackFrameName  . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000004D Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000061 Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -309,7 +332,6 @@ CREATE_ALWAYS  . . . . . . . . .	Number	 00000002h
 CREATE_NEW . . . . . . . . . . .	Number	 00000001h   
 CTRL_MASK  . . . . . . . . . . .	Number	 0000000Ch   
 CreateFile . . . . . . . . . . .	Text   	 CreateFileA
-DECIMAL_OFFSET . . . . . . . . .	Number	 00000005h   
 DO_NOT_SHARE . . . . . . . . . .	Number	 00000000h   
 ENABLE_ECHO_INPUT  . . . . . . .	Number	 00000004h   
 ENABLE_LINE_INPUT  . . . . . . .	Number	 00000002h   
@@ -508,9 +530,6 @@ black  . . . . . . . . . . . . .	Number	 00000000h
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
-decimal_one  . . . . . . . . . .	Byte	 00000000 _DATA	
-decimal_three  . . . . . . . . .	Byte	 0000001B _DATA	
-decimal_two  . . . . . . . . . .	Byte	 0000000F _DATA	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
@@ -521,7 +540,12 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
+pair1op1 . . . . . . . . . . . .	Byte	 00000000 _DATA	
+pair1op2 . . . . . . . . . . . .	Byte	 0000000A _DATA	
+pair2op1 . . . . . . . . . . . .	Byte	 00000014 _DATA	
+pair2op2 . . . . . . . . . . . .	Byte	 0000001E _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
+result . . . . . . . . . . . . .	Byte	 00000028 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   

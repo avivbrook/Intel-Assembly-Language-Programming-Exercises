@@ -112,5 +112,8 @@
     <MASM Include="7_1_DisplayASCIIDecimal.asm">
       <Filter>Source Files\Chapter7</Filter>
     </MASM>
+    <MASM Include="7_2_ExtendedSubtractionProcedure.asm">
+      <Filter>Source Files\Chapter7</Filter>
+    </MASM>
   </ItemGroup>
 </Project>

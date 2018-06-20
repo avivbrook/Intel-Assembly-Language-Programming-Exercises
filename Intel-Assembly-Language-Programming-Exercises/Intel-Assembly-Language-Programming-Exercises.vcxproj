@@ -216,7 +216,10 @@
     <MASM Include="6_9_ValidatingaPIN.asm">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </MASM>
-    <MASM Include="7_1_DisplayASCIIDecimal.asm" />
+    <MASM Include="7_1_DisplayASCIIDecimal.asm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </MASM>
+    <MASM Include="7_2_ExtendedSubtractionProcedure.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
