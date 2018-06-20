@@ -1,10 +1,10 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/19/18 19:00:03
-Boolean Calculato					     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/19/18 19:52:27
+Probabilities and Colour				     Page 1 - 1
 
 
-				TITLE Boolean Calculator
-				; This program functions as a simple boolean calculator for 32-bit
-				; integers.
+				TITLE Probabilities and Colours
+				; This program randomly chooses amongst three different colours for
+				; displaying text on the screen.
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -25,225 +25,49 @@ Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/19/18 19:00:03
 			      C 
 
  00000000			.DATA
- 00000000 31			CaseTable	BYTE		'1'		; lookup value
- 00000001  00000036 R				DWORD	AND_op	; address of procedure
- 00000005 = 00000005		EntrySize = ($ - CaseTable)
- 00000005  32					BYTE		'2'
- 00000006  00000088 R				DWORD	OR_op
- 0000000A  33					BYTE		'3'
- 0000000B  000000DA R				DWORD	NOT_op
- 0000000F  34					BYTE		'4'
- 00000010  00000119 R				DWORD	XOR_op
- 00000014 = 00000004		NumberOfEntries = ($ - CaseTable) / EntrySize
- 00000014 50 6C 65 61 73	prompt	BYTE	"Please make a selection from the following list by pressing the corresponding digit:",0Dh,0Ah
-	   65 20 6D 61 6B
-	   65 20 61 20 73
-	   65 6C 65 63 74
-	   69 6F 6E 20 66
-	   72 6F 6D 20 74
-	   68 65 20 66 6F
-	   6C 6C 6F 77 69
-	   6E 67 20 6C 69
-	   73 74 20 62 79
-	   20 70 72 65 73
-	   73 69 6E 67 20
-	   74 68 65 20 63
-	   6F 72 72 65 73
-	   70 6F 6E 64 69
-	   6E 67 20 64 69
-	   67 69 74 3A 0D
-	   0A
- 0000006A  31 2E 20 78 20			BYTE	"1. x AND y",0Dh,0Ah
-	   41 4E 44 20 79
-	   0D 0A
- 00000076  32 2E 20 78 20			BYTE	"2. x OR y",0Dh,0Ah
-	   4F 52 20 79 0D
-	   0A
- 00000081  33 2E 20 4E 4F			BYTE	"3. NOT x",0Dh,0Ah
-	   54 20 78 0D 0A
- 0000008B  34 2E 20 78 20			BYTE	"4. x XOR y",0Dh,0Ah
-	   58 4F 52 20 79
-	   0D 0A
- 00000097  35 2E 20 45 78			BYTE "5. Exit program",0Dh,0Ah,0Dh,0Ah
-	   69 74 20 70 72
-	   6F 67 72 61 6D
-	   0D 0A 0D 0A
- 000000AA  59 6F 75 72 20			BYTE "Your Selection: ",0
-	   53 65 6C 65 63
-	   74 69 6F 6E 3A
-	   20 00
- 000000BB 41 4E 44 5F 6F	msg1		BYTE	"AND_op",0Dh,0Ah,0
-	   70 0D 0A 00
- 000000C4 4F 52 5F 6F 70	msg2		BYTE	"OR_op",0Dh,0Ah,0
-	   0D 0A 00
- 000000CC 4E 4F 54 5F 6F	msg3		BYTE	"NOT_op",0Dh,0Ah,0
-	   70 0D 0A 00
- 000000D5 58 4F 52 5F 6F	msg4		BYTE	"XOR_op",0Dh,0Ah,0
-	   70 0D 0A 00
- 000000DE 0D 0A 50 6C 65	xPrompt	BYTE	0Dh,0Ah,"Please enter the value of x in hexadecimal: ",0
-	   61 73 65 20 65
-	   6E 74 65 72 20
-	   74 68 65 20 76
-	   61 6C 75 65 20
-	   6F 66 20 78 20
-	   69 6E 20 68 65
-	   78 61 64 65 63
-	   69 6D 61 6C 3A
-	   20 00
- 0000010D 0D 0A 50 6C 65	yPrompt	BYTE	0Dh,0Ah,"Please enter the value of y in hexadecimal: ",0
-	   61 73 65 20 65
-	   6E 74 65 72 20
-	   74 68 65 20 76
-	   61 6C 75 65 20
-	   6F 66 20 79 20
-	   69 6E 20 68 65
-	   78 61 64 65 63
-	   69 6D 61 6C 3A
-	   20 00
-
- 00000000			.DATA?
- 00000000 00000000		x		DWORD	?
- 00000004 00000000		y		DWORD	?
+ 00000000 54 68 69 73 20	text	BYTE	"This is string will randomly change colours!",0Dh,0Ah,0
+	   69 73 20 73 74
+	   72 69 6E 67 20
+	   77 69 6C 6C 20
+	   72 61 6E 64 6F
+	   6D 6C 79 20 63
+	   68 61 6E 67 65
+	   20 63 6F 6C 6F
+	   75 72 73 21 0D
+	   0A 00
 
  00000000			.CODE
  00000000			main PROC
- 00000000  BA 00000014 R		mov	edx,OFFSET prompt		; ask user for input
- 00000005  E8 00000000 E		call	WriteString
- 0000000A  E8 00000000 E		call	ReadChar				; read character into AL
- 0000000F  BB 00000000 R		mov	ebx,OFFSET CaseTable	; point EBX to the table
- 00000014  B9 00000004			mov	ecx,NumberOfEntries		; loop counter
- 00000019			TraverseCaseTable:
- 00000019  3A 03			cmp	al,[ebx]				; match found?
- 0000001B  75 0A			jne	Continue				; no: continue
- 0000001D  FF 53 01			call	NEAR PTR [ebx + 1]		; yes: call the procedure
- 00000020  E8 00000000 E		call	Crlf
- 00000025  EB 08			jmp	done					; exit the search
- 00000027			Continue:
- 00000027  81 C3 00000005		add	ebx,EntrySize			; point to the next entry
- 0000002D  E2 EA			loop	TraverseCaseTable
- 0000002F			done:
+ 00000000  E8 00000000 E		call	Randomize
+ 00000005  B9 00000014			mov	ecx,20					; 20 lines of text
+ 0000000A			PrintText:
+ 0000000A  B8 0000000A			mov	eax,10					; generate a random integer between 0 and 9
+ 0000000F  E8 00000000 E		call	RandomRange
+ 00000014  83 F8 02			cmp	eax,2					; 0 <= EAX <= 2 ?
+ 00000017  77 07			ja	NotWhite
+ 00000019  B8 0000000F			mov	eax,white + (black * 16)		; white = 30% probability
+ 0000001E  EB 11			jmp	done
+ 00000020			NotWhite:
+ 00000020  83 F8 03			cmp	eax,3					; EAX == 3 ?
+ 00000023  75 07			jne	NotBlue
+ 00000025  B8 00000001			mov	eax,blue + (black * 16)		; blue = 10% probability
+ 0000002A  EB 05			jmp	done
+ 0000002C			NotBlue:							; 4 <= EAX <= 9 ?
+ 0000002C  B8 00000002				mov	eax,green + (black * 16)	; green = 60% probability
+ 00000031			done:
+ 00000031  E8 00000000 E		call	SetTextColor
+ 00000036  BA 00000000 R		mov	edx,OFFSET text
+ 0000003B  E8 00000000 E		call	WriteString
+ 00000040  E2 C8			loop	PrintText
+
+ 00000042  B8 00000007			mov	eax,lightGray + (black * 16)	; reset text colour
+ 00000047  E8 00000000 E		call	SetTextColor
+ 0000004C  E8 00000000 E		call	Crlf
 					exit
- 00000036			main ENDP
-
- 0000013C			.DATA
- 0000013C 20 41 4E 44 20	andResult	BYTE	" AND ",0
-	   00
- 00000142 20 3D 20 00		equals	BYTE	" = ",0
-
- 00000036			.CODE
- 00000036			AND_op PROC
- 00000036  BA 000000BB R		mov	edx,OFFSET msg1
- 0000003B  E8 0000012B			call	GetX
- 00000040  E8 00000140			call	GetY
- 00000045  E8 00000000 E		call	Crlf
-
- 0000004A  A1 00000000 R		mov	eax,x
- 0000004F  E8 00000000 E		call	WriteHex				; display x
- 00000054  BA 0000013C R		mov	edx,OFFSET andResult
- 00000059  E8 00000000 E		call	WriteString			; display " AND "
- 0000005E  A1 00000004 R		mov	eax,y
- 00000063  E8 00000000 E		call	WriteHex				; display y
- 00000068  BA 00000142 R		mov	edx,OFFSET equals
- 0000006D  E8 00000000 E		call	WriteString			; display " = "
- 00000072  A1 00000000 R		mov	eax,x
- 00000077  23 05 00000004 R		and	eax,y
- 0000007D  E8 00000000 E		call	WriteHex				; display result
- 00000082  E8 00000000 E		call	Crlf
- 00000087  C3				ret
- 00000088			AND_op ENDP
-
- 00000146			.DATA
- 00000146 20 4F 52 20 00	orResult	BYTE	" OR ",0
-
- 00000088			.CODE
- 00000088			OR_op PROC
- 00000088  BA 000000C4 R		mov	edx,OFFSET msg2
- 0000008D  E8 000000D9			call	GetX
- 00000092  E8 000000EE			call	GetY
- 00000097  E8 00000000 E		call	Crlf
-
- 0000009C  A1 00000000 R		mov	eax,x
- 000000A1  E8 00000000 E		call	WriteHex				; display x
- 000000A6  BA 00000146 R		mov	edx,OFFSET orResult
- 000000AB  E8 00000000 E		call	WriteString			; display " OR "
- 000000B0  A1 00000004 R		mov	eax,y
- 000000B5  E8 00000000 E		call	WriteHex				; display y
- 000000BA  BA 00000142 R		mov	edx,OFFSET equals
- 000000BF  E8 00000000 E		call	WriteString			; display " = "
- 000000C4  A1 00000000 R		mov	eax,x
- 000000C9  0B 05 00000004 R		or	eax,y
- 000000CF  E8 00000000 E		call	WriteHex				; display result
- 000000D4  E8 00000000 E		call	Crlf
- 000000D9  C3				ret
- 000000DA			OR_op ENDP
-
- 0000014B			.DATA
- 0000014B 4E 4F 54 20 00	notResult	BYTE	"NOT ",0
-
- 000000DA			.CODE
- 000000DA			NOT_op PROC
- 000000DA  BA 000000CC R		mov	edx,OFFSET msg3
- 000000DF  E8 00000087			call	GetX
- 000000E4  E8 00000000 E		call	Crlf
-
- 000000E9  BA 0000014B R		mov	edx,OFFSET notResult
- 000000EE  E8 00000000 E		call	WriteString			; display "NOT "
- 000000F3  A1 00000000 R		mov	eax,x
- 000000F8  E8 00000000 E		call	WriteHex				; display x
- 000000FD  BA 00000142 R		mov	edx,OFFSET equals
- 00000102  E8 00000000 E		call	WriteString			; display " = "
- 00000107  A1 00000000 R		mov	eax,x
- 0000010C  F7 D0			not	eax
- 0000010E  E8 00000000 E		call	WriteHex				; display result
- 00000113  E8 00000000 E		call	Crlf
- 00000118  C3				ret
- 00000119			NOT_op ENDP
-
- 00000150			.DATA
- 00000150 20 58 4F 52 20	xorResult	BYTE	" XOR ",0
-	   00
-
- 00000119			.CODE
- 00000119			XOR_op PROC
- 00000119  BA 000000D5 R		mov	edx,OFFSET msg4
- 0000011E  E8 00000048			call	GetX
- 00000123  E8 0000005D			call	GetY
- 00000128  E8 00000000 E		call	Crlf
-
- 0000012D  A1 00000000 R		mov	eax,x
- 00000132  E8 00000000 E		call	WriteHex				; display x
- 00000137  BA 00000150 R		mov	edx,OFFSET xorResult
- 0000013C  E8 00000000 E		call	WriteString			; display " XOR "
- 00000141  A1 00000004 R		mov	eax,y
- 00000146  E8 00000000 E		call	WriteHex				; display y
- 0000014B  BA 00000142 R		mov	edx,OFFSET equals
- 00000150  E8 00000000 E		call	WriteString			; display " = "
- 00000155  A1 00000000 R		mov	eax,x
- 0000015A  33 05 00000004 R		xor	eax,y
- 00000160  E8 00000000 E		call	WriteHex				; display result
- 00000165  E8 00000000 E		call	Crlf
- 0000016A  C3				ret
- 0000016B			XOR_op ENDP
-
- 0000016B			GetX PROC
- 0000016B  E8 00000000 E		call	WriteString			; display message
- 00000170  BA 000000DE R		mov	edx,OFFSET xPrompt
- 00000175  E8 00000000 E		call	WriteString			; get x
- 0000017A  E8 00000000 E		call	ReadHex
- 0000017F  A3 00000000 R		mov	x,eax
- 00000184  C3				ret
- 00000185			GetX ENDP
-
- 00000185			GetY PROC
- 00000185  BA 0000010D R		mov	edx,OFFSET yPrompt
- 0000018A  E8 00000000 E		call	WriteString			; get y
- 0000018F  E8 00000000 E		call	ReadHex
- 00000194  A3 00000004 R		mov	y,eax
- 00000199  C3				ret
- 0000019A			GetY ENDP
+ 00000058			main ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/19/18 19:00:03
-Boolean Calculato					     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/19/18 19:52:27
+Probabilities and Colour				     Symbols 2 - 1
 
 
 
@@ -336,16 +160,14 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_BSS . . . . . . . . . . . . . .	32 Bit	 00000008 Para	  Public  'BSS'  
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000156 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 0000019A Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 0000002F Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000058 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
 
                 N a m e                 Type     Value    Attr
 
-AND_op . . . . . . . . . . . . .	P Near	 00000036 _TEXT	Length= 00000052 Public STDCALL
 CloseFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 CloseHandle  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Clrscr . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -379,8 +201,6 @@ GetStdHandle . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 GetSystemTime  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetTextColor . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetTickCount . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-GetX . . . . . . . . . . . . . .	P Near	 0000016B _TEXT	Length= 0000001A Public STDCALL
-GetY . . . . . . . . . . . . . .	P Near	 00000185 _TEXT	Length= 00000015 Public STDCALL
 Gotoxy . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 HeapAlloc  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 HeapCreate . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -392,8 +212,6 @@ LocalFree  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 MessageBoxA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 MsgBoxAsk  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 MsgBox . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-NOT_op . . . . . . . . . . . . .	P Near	 000000DA _TEXT	Length= 0000003F Public STDCALL
-OR_op  . . . . . . . . . . . . .	P Near	 00000088 _TEXT	Length= 00000052 Public STDCALL
 OpenInputFile  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ParseDecimal32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ParseInteger32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -450,11 +268,11 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-XOR_op . . . . . . . . . . . . .	P Near	 00000119 _TEXT	Length= 00000052 Public STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000036 Public STDCALL
-  TraverseCaseTable  . . . . . .	L Near	 00000019 _TEXT	
-  Continue . . . . . . . . . . .	L Near	 00000027 _TEXT	
-  done . . . . . . . . . . . . .	L Near	 0000002F _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000058 Public STDCALL
+  PrintText  . . . . . . . . . .	L Near	 0000000A _TEXT	
+  NotWhite . . . . . . . . . . .	L Near	 00000020 _TEXT	
+  NotBlue  . . . . . . . . . . .	L Near	 0000002C _TEXT	
+  done . . . . . . . . . . . . .	L Near	 00000031 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -478,7 +296,6 @@ CAPSLOCK_ON  . . . . . . . . . .	Number	 00000080h
 CREATE_ALWAYS  . . . . . . . . .	Number	 00000002h   
 CREATE_NEW . . . . . . . . . . .	Number	 00000001h   
 CTRL_MASK  . . . . . . . . . . .	Number	 0000000Ch   
-CaseTable  . . . . . . . . . . .	Byte	 00000000 _DATA	
 CreateFile . . . . . . . . . . .	Text   	 CreateFileA
 DO_NOT_SHARE . . . . . . . . . .	Number	 00000000h   
 ENABLE_ECHO_INPUT  . . . . . . .	Number	 00000004h   
@@ -489,7 +306,6 @@ ENABLE_PROCESSED_OUTPUT  . . . .	Number	 00000001h
 ENABLE_WINDOW_INPUT  . . . . . .	Number	 00000008h   
 ENABLE_WRAP_AT_EOL_OUTPUT  . . .	Number	 00000002h   
 ENHANCED_KEY . . . . . . . . . .	Number	 00000100h   
-EntrySize  . . . . . . . . . . .	Number	 00000005h   
 FALSE  . . . . . . . . . . . . .	Number	 00000000h   
 FILE_APPEND_DATA . . . . . . . .	Number	 00000004h   
 FILE_ATTRIBUTE_ARCHIVE . . . . .	Number	 00000020h   
@@ -577,7 +393,6 @@ MOUSE_EVENT  . . . . . . . . . .	Number	 00000002h
 MessageBox . . . . . . . . . . .	Text   	 MessageBoxA
 NULL . . . . . . . . . . . . . .	Number	 00000000h   
 NUMLOCK_ON . . . . . . . . . . .	Number	 00000020h   
-NumberOfEntries  . . . . . . . .	Number	 00000004h   
 OPEN_ALWAYS  . . . . . . . . . .	Number	 00000004h   
 OPEN_EXISTING  . . . . . . . . .	Number	 00000003h   
 PeekConsoleInput . . . . . . . .	Text   	 PeekConsoleInputA
@@ -676,12 +491,10 @@ VK_UP  . . . . . . . . . . . . .	Number	 00000026h
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
-andResult  . . . . . . . . . . .	Byte	 0000013C _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
-equals . . . . . . . . . . . . .	Byte	 00000142 _DATA	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
@@ -692,22 +505,11 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-msg1 . . . . . . . . . . . . . .	Byte	 000000BB _DATA	
-msg2 . . . . . . . . . . . . . .	Byte	 000000C4 _DATA	
-msg3 . . . . . . . . . . . . . .	Byte	 000000CC _DATA	
-msg4 . . . . . . . . . . . . . .	Byte	 000000D5 _DATA	
-notResult  . . . . . . . . . . .	Byte	 0000014B _DATA	
-orResult . . . . . . . . . . . .	Byte	 00000146 _DATA	
-prompt . . . . . . . . . . . . .	Byte	 00000014 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
+text . . . . . . . . . . . . . .	Byte	 00000000 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
-xPrompt  . . . . . . . . . . . .	Byte	 000000DE _DATA	
-xorResult  . . . . . . . . . . .	Byte	 00000150 _DATA	
-x  . . . . . . . . . . . . . . .	DWord	 00000000 _BSS	
-yPrompt  . . . . . . . . . . . .	Byte	 0000010D _DATA	
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
-y  . . . . . . . . . . . . . . .	DWord	 00000004 _BSS	
 
 	   0 Warnings
 	   0 Errors

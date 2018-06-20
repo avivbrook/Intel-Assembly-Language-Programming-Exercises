@@ -97,5 +97,8 @@
     <MASM Include="6_5-6_BooleanCalculator.asm">
       <Filter>Source Files\Chapter6</Filter>
     </MASM>
+    <MASM Include="6_7_ProbabilitiesandColours.asm">
+      <Filter>Source Files\Chapter6</Filter>
+    </MASM>
   </ItemGroup>
 </Project>
