@@ -39,10 +39,8 @@ Step 11: Go to **Linker** > **Advanced** and set **Randomized Base Address** to 
 
 Step 12: Click **Apply** and **OK** to close the window.
 
-```
 Try pressing F10 or F11 to enter debugging mode. If everything's working fine, congratulations -- the project works!
-```
 
 ## Author
 
-* **Aviv Brook** - *Based on exercises from Kip Irvine's book.* - [PurpleBooth](https://github.com/avivbrook)
+* **Aviv Brook** - *Based on exercises from Kip Irvine's book.* - [avivbrook](https://github.com/avivbrook)
