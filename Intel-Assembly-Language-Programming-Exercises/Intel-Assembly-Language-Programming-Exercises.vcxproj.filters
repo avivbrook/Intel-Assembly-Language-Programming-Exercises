@@ -17,6 +17,9 @@
     <Filter Include="Source Files\Chapter6">
       <UniqueIdentifier>{a7df512f-10a5-49ed-b5e3-b7222d7839fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Chapter7">
+      <UniqueIdentifier>{a8732510-67db-4360-93e8-1638bae4ab29}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="3_1_IntegerExpressionCalculation.asm">
@@ -105,6 +108,9 @@
     </MASM>
     <MASM Include="6_9_ValidatingaPIN.asm">
       <Filter>Source Files\Chapter6</Filter>
+    </MASM>
+    <MASM Include="7_1_DisplayASCIIDecimal.asm">
+      <Filter>Source Files\Chapter7</Filter>
     </MASM>
   </ItemGroup>
 </Project>

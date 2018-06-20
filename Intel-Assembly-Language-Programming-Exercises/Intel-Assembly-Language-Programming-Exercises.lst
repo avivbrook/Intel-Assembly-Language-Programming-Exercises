@@ -1,10 +1,10 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/19/18 21:23:28
-Validating a PI					     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/20/18 10:50:15
+Display ASCII Decima					     Page 1 - 1
 
 
-				TITLE Validating a PIN
-				; This program validates a number of 5-digit PINs to ensure the values are
-				; within the specified ranges.
+				TITLE Display ASCII Decimal
+				; This program passes three numbers of different sizes to the WriteScaled
+				; procedure, which outputs each of the numbers with a decimal point.
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -24,84 +24,63 @@ Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/19/18 21:23:28
 			      C .LIST
 			      C 
 
- = 00000005			PIN_LENGTH = 5
+ = 00000005			DECIMAL_OFFSET = 5
 
  00000000			.DATA
- 00000000 05 02 04 01 03	pin1		BYTE	5,2,4,1,3	; valid PIN
- 00000005 04 03 05 03 04	pin2		BYTE	4,3,5,3,4	; first digit out of range
- 0000000A 06 04 05 03 07	pin3		BYTE	6,4,5,3,7	; last digit out of range
- 0000000F 07 04 06 03 05	pin4		BYTE	7,4,6,3,5	; valid PIN
+ 00000000 31 30 30 31 32	decimal_one	BYTE	"100123456789765"
+	   33 34 35 36 37
+	   38 39 37 36 35
+ 0000000F 34 34 34 31 34	decimal_two	BYTE	"444143474143"
+	   33 34 37 34 31
+	   34 33
+ 0000001B 32 32 32 30 30	decimal_three	BYTE	"222001"
+	   31
 
  00000000			.CODE
  00000000			main PROC
- 00000000  BE 00000000 R		mov	esi,OFFSET pin1
- 00000005  E8 00000056			call	Output
- 0000000A  BE 00000005 R		mov	esi,OFFSET pin2
- 0000000F  E8 0000004C			call	Output
- 00000014  BE 0000000A R		mov	esi,OFFSET pin3
- 00000019  E8 00000042			call	Output
- 0000001E  BE 0000000F R		mov	esi,OFFSET pin4
- 00000023  E8 00000038			call	Output
+ 00000000  BB 00000005			mov	ebx,DECIMAL_OFFSET
+ 00000005  E8 00000000 E		call	Clrscr
+ 0000000A  BA 00000000 R		mov	edx,OFFSET decimal_one
+ 0000000F  B9 0000000F			mov	ecx,LENGTHOF decimal_one
+ 00000014  E8 00000034			call	WriteScaled
+ 00000019  E8 00000000 E		call	Crlf
+ 0000001E  BA 0000000F R		mov	edx,OFFSET decimal_two
+ 00000023  B9 0000000C			mov	ecx,LENGTHOF decimal_two
+ 00000028  E8 00000020			call	WriteScaled
+ 0000002D  E8 00000000 E		call	Crlf
+ 00000032  BA 0000001B R		mov	edx,OFFSET decimal_three
+ 00000037  B9 00000006			mov	ecx,LENGTHOF decimal_three
+ 0000003C  E8 0000000C			call	WriteScaled
+ 00000041  E8 00000000 E		call	Crlf
 					exit
- 0000002F			main ENDP
+ 0000004D			main ENDP
 
- 00000014			.DATA
- 00000014 05 02 04 01 03	minVals	BYTE	5,2,4,1,3
- 00000019 09 05 08 04 06	maxVals	BYTE	9,5,8,4,6
-
- 0000002F			.CODE
-				; This procedure validates each digit of the PIN.
-				; Receives:	ESI points to the PIN
-				; Returns:	EAX = position of invalid digit or 0 if PIN is valid
- 0000002F			Validate_PIN PROC USES ecx edi esi
- 00000032  BF 00000000			mov	edi,0			; index of value arrays
- 00000037  B9 00000005			mov	ecx,PIN_LENGTH		; loop counter
- 0000003C			TraversePIN:
- 0000003C  8A 06			mov	al,[esi]			; current digit of PIN
- 0000003E  3A 87 00000014 R		cmp	al,minVals[edi]	; is al < minVals[edi] ?
- 00000044  72 08			jb	ReturnIndex		; if yes, immediately return
- 00000046  3A 87 00000019 R		cmp	al,maxVals[edi]	; is al > maxVals[edi] ?
- 0000004C  76 05			jbe	NextDigit			; if no, continue
- 0000004E			ReturnIndex:
- 0000004E  8B C7			mov	eax,edi		; return index of invalid digit
- 00000050  40				inc	eax
- 00000051  EB 09			jmp	done
- 00000053			NextDigit:
- 00000053  46				inc	esi
- 00000054  47				inc	edi
- 00000055  E2 E5			loop	TraversePIN
- 00000057  B8 00000000			mov	eax,0			; all digits are valid
- 0000005C			done:
-					ret
- 00000060			Validate_PIN ENDP
-
- 0000001E			.DATA
- 0000001E 56 61 6C 69 64	valid	BYTE	"Valid",0
-	   00
- 00000024 20 64 69 67 69	invalid	BYTE	" digit is invalid",0
-	   74 20 69 73 20
-	   69 6E 76 61 6C
-	   69 64 00
-
- 00000060			.CODE
- 00000060			Output PROC USES edx
- 00000061  E8 FFFFFFC9			call	Validate_PIN
- 00000066  0B C0			or	eax,eax			; EAX == 0 ?
- 00000068  75 0C			jne	NotValid			; if no, invalid
- 0000006A  BA 0000001E R		mov	edx,OFFSET valid	; "Valid"
- 0000006F  E8 00000000 E		call	WriteString
- 00000074  EB 0F			jmp	IsValid
- 00000076			NotValid:
- 00000076  E8 00000000 E			call	WriteDec		; # " digit is invalid"
- 0000007B  BA 00000024 R			mov	edx,OFFSET invalid
- 00000080  E8 00000000 E			call	WriteString
- 00000085			IsValid:
- 00000085  E8 00000000 E		call	Crlf
-					ret
- 0000008C			Output ENDP
+				; This procedure outputs a decimal ASCII number with an implied decimal
+				; point.
+				; Receives:	EDX = number's offset, ECX = number's length
+				;			EBX  = decimal's offset
+ 0000004D			WriteScaled PROC
+ 0000004D  60				pushad
+ 0000004E  2B CB			sub	ecx,ebx
+ 00000050			WriteNumberBeforeDecimal:
+ 00000050  8A 02			mov	al,[edx]
+ 00000052  E8 00000000 E		call	WriteChar
+ 00000057  42				inc	edx
+ 00000058  E2 F6			loop	WriteNumberBeforeDecimal
+ 0000005A  B0 2E			mov	al,'.'
+ 0000005C  E8 00000000 E		call	WriteChar
+ 00000061  8B CB			mov	ecx,ebx
+ 00000063			WriteNumberAfterDecimal:
+ 00000063  8A 02			mov	al,[edx]
+ 00000065  E8 00000000 E		call	WriteChar
+ 0000006A  42				inc	edx
+ 0000006B  E2 F6			loop	WriteNumberAfterDecimal
+ 0000006D  61				popad
+ 0000006E  C3				ret
+ 0000006F			WriteScaled ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/19/18 21:23:28
-Validating a PI					     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/20/18 10:50:15
+Display ASCII Decima					     Symbols 2 - 1
 
 
 
@@ -194,8 +173,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000036 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 0000008C Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000021 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000006F Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -247,9 +226,6 @@ MessageBoxA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 MsgBoxAsk  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 MsgBox . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 OpenInputFile  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Output . . . . . . . . . . . . .	P Near	 00000060 _TEXT	Length= 0000002C Public STDCALL
-  NotValid . . . . . . . . . . .	L Near	 00000076 _TEXT	
-  IsValid  . . . . . . . . . . .	L Near	 00000085 _TEXT	
 ParseDecimal32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ParseInteger32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 PeekConsoleInputA  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -287,11 +263,6 @@ Str_length . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 Str_trim . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Str_ucase  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 SystemTimeToFileTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Validate_PIN . . . . . . . . . .	P Near	 0000002F _TEXT	Length= 00000031 Public STDCALL
-  TraversePIN  . . . . . . . . .	L Near	 0000003C _TEXT	
-  ReturnIndex  . . . . . . . . .	L Near	 0000004E _TEXT	
-  NextDigit  . . . . . . . . . .	L Near	 00000053 _TEXT	
-  done . . . . . . . . . . . . .	L Near	 0000005C _TEXT	
 WaitMsg  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteBinB  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteBin . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -305,12 +276,15 @@ WriteFloat . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteHexB  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteHex . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteInt . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteScaled  . . . . . . . . . .	P Near	 0000004D _TEXT	Length= 00000022 Public STDCALL
+  WriteNumberBeforeDecimal . . .	L Near	 00000050 _TEXT	
+  WriteNumberAfterDecimal  . . .	L Near	 00000063 _TEXT	
 WriteStackFrameName  . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000002F Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000004D Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -335,6 +309,7 @@ CREATE_ALWAYS  . . . . . . . . .	Number	 00000002h
 CREATE_NEW . . . . . . . . . . .	Number	 00000001h   
 CTRL_MASK  . . . . . . . . . . .	Number	 0000000Ch   
 CreateFile . . . . . . . . . . .	Text   	 CreateFileA
+DECIMAL_OFFSET . . . . . . . . .	Number	 00000005h   
 DO_NOT_SHARE . . . . . . . . . .	Number	 00000000h   
 ENABLE_ECHO_INPUT  . . . . . . .	Number	 00000004h   
 ENABLE_LINE_INPUT  . . . . . . .	Number	 00000002h   
@@ -433,7 +408,6 @@ NULL . . . . . . . . . . . . . .	Number	 00000000h
 NUMLOCK_ON . . . . . . . . . . .	Number	 00000020h   
 OPEN_ALWAYS  . . . . . . . . . .	Number	 00000004h   
 OPEN_EXISTING  . . . . . . . . .	Number	 00000003h   
-PIN_LENGTH . . . . . . . . . . .	Number	 00000005h   
 PeekConsoleInput . . . . . . . .	Text   	 PeekConsoleInputA
 RIGHT_ALT_PRESSED  . . . . . . .	Number	 00000001h   
 RIGHT_CTRL_PRESSED . . . . . . .	Number	 00000004h   
@@ -534,10 +508,12 @@ black  . . . . . . . . . . . . .	Number	 00000000h
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
+decimal_one  . . . . . . . . . .	Byte	 00000000 _DATA	
+decimal_three  . . . . . . . . .	Byte	 0000001B _DATA	
+decimal_two  . . . . . . . . . .	Byte	 0000000F _DATA	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
-invalid  . . . . . . . . . . . .	Byte	 00000024 _DATA	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
@@ -545,14 +521,7 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-maxVals  . . . . . . . . . . . .	Byte	 00000019 _DATA	
-minVals  . . . . . . . . . . . .	Byte	 00000014 _DATA	
-pin1 . . . . . . . . . . . . . .	Byte	 00000000 _DATA	
-pin2 . . . . . . . . . . . . . .	Byte	 00000005 _DATA	
-pin3 . . . . . . . . . . . . . .	Byte	 0000000A _DATA	
-pin4 . . . . . . . . . . . . . .	Byte	 0000000F _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-valid  . . . . . . . . . . . . .	Byte	 0000001E _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
