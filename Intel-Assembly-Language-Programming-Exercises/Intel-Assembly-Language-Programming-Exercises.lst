@@ -1,11 +1,9 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/19/18 16:55:55
-Test Score Evaluatio					     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/19/18 18:08:48
+College Registratio					     Page 1 - 1
 
 
-				TITLE Test Score Evaluation
-				; This program generates 10 random scores between 50 and 100 inclusive and
-				; passes each of them to the CalcGrade procedure which returns the
-				; corresponding letter grade for each score.
+				TITLE College Registration
+
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -25,68 +23,165 @@ Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/19/18 16:55:55
 			      C .LIST
 			      C 
 
+ = 00000001			TRUE = 1
+ = 00000000			FALSE = 0
+
  00000000			.DATA
- 00000000 53 63 6F 72 65	tableHeader	BYTE	"Score	Letter",0Dh,0Ah,0
-	   09 4C 65 74 74
+ 00000000 50 6C 65 61 73	promptGradeAverage	BYTE	"Please enter your grade average: ",0
+	   65 20 65 6E 74
+	   65 72 20 79 6F
+	   75 72 20 67 72
+	   61 64 65 20 61
+	   76 65 72 61 67
+	   65 3A 20 00
+ 00000022 50 6C 65 61 73	promptCredits		BYTE	"Please enter the number of credits you want: ",0
+	   65 20 65 6E 74
+	   65 72 20 74 68
+	   65 20 6E 75 6D
+	   62 65 72 20 6F
+	   66 20 63 72 65
+	   64 69 74 73 20
+	   79 6F 75 20 77
+	   61 6E 74 3A 20
+	   00
+ 00000050 54 68 65 20 73	canRegister		BYTE	"The student can register",0Dh,0Ah,0
+	   74 75 64 65 6E
+	   74 20 63 61 6E
+	   20 72 65 67 69
+	   73 74 65 72 0D
+	   0A 00
+ 0000006B 54 68 65 20 73	cannotRegister		BYTE	"The student cannot register",0Dh,0Ah,0
+	   74 75 64 65 6E
+	   74 20 63 61 6E
+	   6E 6F 74 20 72
+	   65 67 69 73 74
 	   65 72 0D 0A 00
+ 00000089 45 52 52 4F 52	errorMessage		BYTE	"ERROR: Invalid input.",0Dh,0Ah,0
+	   3A 20 49 6E 76
+	   61 6C 69 64 20
+	   69 6E 70 75 74
+	   2E 0D 0A 00
+
+ 00000000			.DATA?
+ 00000000 0000			gradeAverage		WORD	?
+ 00000002 0000			credits			WORD	?
+ 00000004 00			validInput		BYTE	?
+ 00000005 00			OkToRegister		BYTE	?
 
  00000000			.CODE
  00000000			main PROC
- 00000000  BA 00000000 R		mov	edx,OFFSET tableHeader
- 00000005  E8 00000000 E		call	WriteString	; print table header
- 0000000A  E8 00000000 E		call	Randomize		; initialise the starting seed value
- 0000000F  B9 0000000A			mov	ecx,10		; generate 10 grades
- 00000014			GenerateGrades:
- 00000014  B8 00000033			mov	eax,51		; produce a random integer (0 -> 50)
- 00000019  E8 00000000 E		call	RandomRange
- 0000001E  83 C0 32			add	eax,50		; (0 -> 50) + 50 = (50 -> 100)
- 00000021  E8 00000000 E		call	WriteDec		; print score to console window
- 00000026  50				push	eax
- 00000027  B0 09			mov	al,9			; ASCII code for tab
- 00000029  E8 00000000 E		call	WriteChar		; print a tab
- 0000002E  58				pop	eax
- 0000002F  E8 00000018			call	CalcGrade		; get letter grade
- 00000034  E8 00000000 E		call	WriteChar		; print the letter grade
- 00000039  E8 00000000 E		call	Crlf
- 0000003E  E2 D4			loop	GenerateGrades
- 00000040  E8 00000000 E		call	Crlf
-					exit
- 0000004C			main ENDP
+ 00000000  BA 00000000 R		mov	edx,OFFSET promptGradeAverage	; prompt the user for gradeAverage
+ 00000005  E8 00000000 E		call	WriteString
+ 0000000A  E8 00000000 E		call	ReadDec
+ 0000000F  66| A3			mov	gradeAverage,ax
+	   00000000 R
+ 00000015  BA 00000022 R		mov	edx,OFFSET promptCredits		; prompt the user for credits
+ 0000001A  E8 00000000 E		call	WriteString
+ 0000001F  E8 00000000 E		call	ReadDec
+ 00000024  66| A3			mov	credits,ax
+	   00000002 R
 
-				; This program receives a score and returns the corresponding letter grade
-				; for that value.
-				; Receives: EAX = an integer value (0 - 100)
-				; Returns: AL = a single capital letter
- 0000004C			CalcGrade PROC
- 0000004C  83 F8 5A			cmp	eax,90	; is score >= 90
- 0000004F  73 11			jae	GradeA	; if yes, grade = A
- 00000051  83 F8 50			cmp	eax,80	; is score >= 80
- 00000054  73 10			jae	GradeB	; if yes, grade = B
- 00000056  83 F8 46			cmp	eax,70	; is score >= 70
- 00000059  73 0F			jae	GradeC	; if yes, grade = C
- 0000005B  83 F8 3C			cmp	eax,60	; is score >= 60
- 0000005E  73 0E			jae	GradeD	; if yes, grade = D
- 00000060  EB 10			jmp	GradeF	; if score < 60, grade = F
- 00000062			GradeA:
- 00000062  B0 41			mov	al,'A'
- 00000064  EB 0E			jmp	done
- 00000066			GradeB:
- 00000066  B0 42			mov	al,'B'
- 00000068  EB 0A			jmp	done
- 0000006A			GradeC:
- 0000006A  B0 43			mov	al,'C'
- 0000006C  EB 06			jmp	done
- 0000006E			GradeD:
- 0000006E  B0 44			mov	al,'D'
- 00000070  EB 02			jmp	done
- 00000072			GradeF:
- 00000072  B0 46			mov	al,'F'
- 00000074			done:
- 00000074  C3				ret
- 00000075			CalcGrade ENDP
+ 0000002A  E8 00000099			call	CheckRange				; validate input
+ 0000002F  A0 00000004 R		mov	al,validInput
+					; .IF validInput == FALSE
+ 00000034  3C 00			cmp	al,FALSE					; is input not valid ?
+ 00000036  75 20			jne	C1						; if input is valid, proceed
+ 00000038  B8 00000004			mov	eax,red + (black * 16)		; print error message in red
+ 0000003D  E8 00000000 E		call	SetTextColor
+ 00000042  BA 00000089 R		mov	edx,OFFSET errorMessage		; if not, print error message
+ 00000047  E8 00000000 E		call	WriteString
+ 0000004C  B8 00000007			mov	eax,lightGray + (black * 16)	; reset color
+ 00000051  E8 00000000 E		call	SetTextColor
+ 00000056  EB 1F			jmp	done
+					; .ENDIF
+ 00000058			C1:								; input is valid
+ 00000058  E8 00000021			call	OkToRegisterOrNot
+ 0000005D  A0 00000005 R		mov	al,OkToRegister
+					;.IF OkToRegister == TRUE
+ 00000062  3C 01			cmp	al,TRUE					; OkToRegister?
+ 00000064  75 07			jne	cannot
+ 00000066  BA 00000050 R		mov	edx,OFFSET canRegister
+					;.ELSE
+ 0000006B  EB 05			jmp	can
+ 0000006D			cannot:
+ 0000006D  BA 0000006B R			mov	edx,OFFSET cannotRegister
+					;.ENDIF
+ 00000072			can:
+ 00000072  E8 00000000 E		call	WriteString
+ 00000077			done:
+					exit
+ 0000007E			main ENDP
+
+				; This procedure uses two criteria to determine whether or not a student
+				; can register: The first is the person's grade average, based on a 0 to
+				; 400 scale, where 400 is the highest possible grade. The second is the
+				; number of credits the person wants to take.
+				; Receives: gradeAverage (0 - 400), credits (1 - 30)
+				; Returns: OkToRegister
+ 0000007E			OkToRegisterOrNot PROC USES eax ebx
+ 00000080  C6 05 00000005 R		mov	OkToRegister,FALSE	; default: not ok to register
+	   00
+ 00000087  66| A1			mov	ax,gradeAverage
+	   00000000 R
+ 0000008D  66| 8B 1D			mov	bx,credits
+	   00000002 R
+					; .IF gradeAverage > 350
+ 00000094  66| 3D 015E			cmp	ax,350			; is gradeAverage > 350 ?
+ 00000098  76 09			jbe	C1				; if not, jump to ElseIf1
+ 0000009A  C6 05 00000005 R		mov	OkToRegister,TRUE	; if yes, OkToRegister = TRUE
+	   01
+					; .ELSEIF (gradeAverage > 250) && (credits <= 16)
+ 000000A1  EB 22			jmp	done				; if not, OkToRegister remains FALSE
+ 000000A3			C1:
+ 000000A3  66| 3D 00FA			cmp	ax,250			; is gradeAverage > 250 ?
+ 000000A7  76 0F			jbe	C2				; if not, jump to ElseIf2
+ 000000A9  66| 83 FB 10			cmp	bx,16			; is credits <= 16 ?
+ 000000AD  77 09			ja	C2				; if not, jump to ElseIf2
+ 000000AF  C6 05 00000005 R		mov	OkToRegister,TRUE	; if yes, OkToRegister = TRUE
+	   01
+					; .ELSEIF (credits <= 12)
+ 000000B6  EB 0D			jmp	done				; if not, OkToRegister remains FALSE
+ 000000B8			C2:
+ 000000B8  66| 83 FB 0C			cmp	bx,12			; is credits <= 12
+ 000000BC  77 07			ja	done				; if not, OkToRegister remains FALSE
+ 000000BE  C6 05 00000005 R		mov	OkToRegister,TRUE	;if yes, OkToRegister = TRUE
+	   01
+					; .ENDIF
+ 000000C5			done:
+					ret
+ 000000C8			OkToRegisterOrNot ENDP
+
+				; This procedure determines if determines if the grade average and credits
+				; values are within the valid range. gradeAverage must be between 0 and
+				; 400, credits must be between 1 and 30.
+				; Receives: gradeAverage, credits
+				; Returns: validInput
+ 000000C8			CheckRange PROC
+ 000000C8  C6 05 00000004 R		mov	validInput,FALSE	; default: input is invalid
+	   00
+ 000000CF  66| A1			mov	ax,gradeAverage
+	   00000000 R
+ 000000D5  66| 8B 1D			mov	bx,credits
+	   00000002 R
+					; .IF (gradeAverage >= 0 && gradeAverage <= 400) &&
+					; (credits >= 1 && credits <= 30)
+ 000000DC  66| 83 F8 00			cmp	ax,0				; is gradeAverage >= 0 ?
+ 000000E0  72 19			jb	done				; if not, input invalid
+ 000000E2  66| 3D 0190			cmp	ax,400			; is gradeAverage <= 400 ?
+ 000000E6  77 13			ja	done				; if not, input invalid
+ 000000E8  66| 83 FB 01			cmp	bx,1				; is credits >= 1 ?
+ 000000EC  72 0D			jb	done				; if not, input invalid
+ 000000EE  66| 83 FB 1E			cmp	bx,30			; is credits <= 30 ?
+ 000000F2  77 07			ja	done				; if not, input invalid
+ 000000F4  C6 05 00000004 R		mov	validInput,TRUE	; if all conditions are true, input is valid
+	   01
+					; .ENDIF
+ 000000FB			done:
+ 000000FB  C3				ret
+ 000000FC			CheckRange ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/19/18 16:55:55
-Test Score Evaluatio					     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/19/18 18:08:48
+College Registratio					     Symbols 2 - 1
 
 
 
@@ -179,21 +274,17 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 0000000F Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000075 Para	  Public  'CODE'	
+_BSS . . . . . . . . . . . . . .	32 Bit	 00000006 Para	  Public  'BSS'  
+_DATA  . . . . . . . . . . . . .	32 Bit	 000000A1 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 000000FC Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
 
                 N a m e                 Type     Value    Attr
 
-CalcGrade  . . . . . . . . . . .	P Near	 0000004C _TEXT	Length= 00000029 Public STDCALL
-  GradeA . . . . . . . . . . . .	L Near	 00000062 _TEXT	
-  GradeB . . . . . . . . . . . .	L Near	 00000066 _TEXT	
-  GradeC . . . . . . . . . . . .	L Near	 0000006A _TEXT	
-  GradeD . . . . . . . . . . . .	L Near	 0000006E _TEXT	
-  GradeF . . . . . . . . . . . .	L Near	 00000072 _TEXT	
-  done . . . . . . . . . . . . .	L Near	 00000074 _TEXT	
+CheckRange . . . . . . . . . . .	P Near	 000000C8 _TEXT	Length= 00000034 Public STDCALL
+  done . . . . . . . . . . . . .	L Near	 000000FB _TEXT	
 CloseFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 CloseHandle  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Clrscr . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -238,6 +329,10 @@ LocalFree  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 MessageBoxA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 MsgBoxAsk  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 MsgBox . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+OkToRegisterOrNot  . . . . . . .	P Near	 0000007E _TEXT	Length= 0000004A Public STDCALL
+  C1 . . . . . . . . . . . . . .	L Near	 000000A3 _TEXT	
+  C2 . . . . . . . . . . . . . .	L Near	 000000B8 _TEXT	
+  done . . . . . . . . . . . . .	L Near	 000000C5 _TEXT	
 OpenInputFile  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ParseDecimal32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ParseInteger32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -294,8 +389,11 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000004C Public STDCALL
-  GenerateGrades . . . . . . . .	L Near	 00000014 _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000007E Public STDCALL
+  C1 . . . . . . . . . . . . . .	L Near	 00000058 _TEXT	
+  cannot . . . . . . . . . . . .	L Near	 0000006D _TEXT	
+  can  . . . . . . . . . . . . .	L Near	 00000072 _TEXT	
+  done . . . . . . . . . . . . .	L Near	 00000077 _TEXT	
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -418,6 +516,7 @@ NULL . . . . . . . . . . . . . .	Number	 00000000h
 NUMLOCK_ON . . . . . . . . . . .	Number	 00000020h   
 OPEN_ALWAYS  . . . . . . . . . .	Number	 00000004h   
 OPEN_EXISTING  . . . . . . . . .	Number	 00000003h   
+OkToRegister . . . . . . . . . .	Byte	 00000005 _BSS	
 PeekConsoleInput . . . . . . . .	Text   	 PeekConsoleInputA
 RIGHT_ALT_PRESSED  . . . . . . .	Number	 00000001h   
 RIGHT_CTRL_PRESSED . . . . . . .	Number	 00000004h   
@@ -517,8 +616,13 @@ WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
+canRegister  . . . . . . . . . .	Byte	 00000050 _DATA	
+cannotRegister . . . . . . . . .	Byte	 0000006B _DATA	
+credits  . . . . . . . . . . . .	Word	 00000002 _BSS	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
+errorMessage . . . . . . . . . .	Byte	 00000089 _DATA	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
+gradeAverage . . . . . . . . . .	Word	 00000000 _BSS	
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
@@ -528,8 +632,10 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
+promptCredits  . . . . . . . . .	Byte	 00000022 _DATA	
+promptGradeAverage . . . . . . .	Byte	 00000000 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-tableHeader  . . . . . . . . . .	Byte	 00000000 _DATA	
+validInput . . . . . . . . . . .	Byte	 00000004 _BSS	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   

@@ -91,5 +91,8 @@
     <MASM Include="6_3_TestScoreEvaluation.asm">
       <Filter>Source Files\Chapter6</Filter>
     </MASM>
+    <MASM Include="6_4_CollegeRegistration.asm">
+      <Filter>Source Files\Chapter6</Filter>
+    </MASM>
   </ItemGroup>
 </Project>
