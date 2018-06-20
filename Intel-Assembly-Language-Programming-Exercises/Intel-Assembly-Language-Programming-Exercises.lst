@@ -1,10 +1,10 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/20/18 12:01:33
-Extended Subtraction Procedur				     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/20/18 13:48:12
+"Encryption Using Rotate Operation			     Page 1 - 1
 
 
-				TITLE Extended Subtraction Procedure
-				; This program passes several pairs of integers, each at least 10 bytes
-				; long to the Extended_Sub procedure which then subtract them.
+				TITLE Encryption Using Rotate Operations
+				; This program tests the TranslateBuffer procedure by calling it twice
+				; with different data sets.
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -25,84 +25,104 @@ Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/20/18 12:01:33
 			      C 
 
  00000000			.DATA
- 00000000 34 12 98 74 06	pair1op1	BYTE	34h,12h,98h,74h,06h,0A4h,0B2h,0A2h,56h,78h
-	   A4 B2 A2 56 78
- 0000000A 02 45 23 00 00	pair1op2	BYTE	02h,45h,23h,00h,00h,87h,10h,80h,13h,24h
-	   87 10 80 13 24
- 00000014 5B FC 6A 22 00	pair2op1	BYTE	5Bh,0FCh,6Ah,22h,00h,20h,70h,00h,00h,40h
-	   20 70 00 00 40
- 0000001E 10 0A 00 40 10	pair2op2	BYTE	10h,0Ah,00h,40h,10h,0Ah,00h,40h,10h,0Ah
-	   0A 00 40 10 0A
- 00000028  0000000B [		result	BYTE	11 DUP(0)
-	    00
-	   ]
+ 00000000 FE 04 01 00 FD	key1		BYTE		-2,4,1,0,-3,5,2,-4,-4,6
+	   05 02 FC FC 06
+ 0000000A = 0000000A		keySize = $ - key1
+ 0000000A FD 04 01 00 FD	key2		BYTE		-3,4,1,0,-3,5,2,-4,-4,6
+	   05 02 FC FC 06
+ 00000014 50 6C 61 69 6E	plain	BYTE		"Plain text: ",0
+	   20 74 65 78 74
+	   3A 20 00
+ 00000021 43 69 70 68 65	cipher	BYTE		"Cipher text: ",0
+	   72 20 74 65 78
+	   74 3A 20 00
+ 0000002F 42 61 6E 6B 20	buffer1	BYTE		"Bank account #: 8753257",0
+	   61 63 63 6F 75
+	   6E 74 20 23 3A
+	   20 38 37 35 33
+	   32 35 37 00
+ 00000047 54 68 69 73 20	buffer2	BYTE		"This is a Plaintext message",0
+	   69 73 20 61 20
+	   50 6C 61 69 6E
+	   74 65 78 74 20
+	   6D 65 73 73 61
+	   67 65 00
 
  00000000			.CODE
  00000000			main PROC
- 00000000  BE 00000000 R		mov	esi,OFFSET pair1op1		; first operand
- 00000005  BF 0000000A R		mov	edi,OFFSET pair1op2		; second operand
- 0000000A  BB 00000028 R		mov	ebx,OFFSET result		; result operand
- 0000000F  B9 0000000A			mov	ecx,LENGTHOF pair1op1	; number of bytes
- 00000014  E8 00000048			call	Extended_Sub
- 00000019  BE 00000028 R		mov	esi,OFFSET result		; display the result
- 0000001E  B9 0000000B			mov	ecx,LENGTHOF result
- 00000023  E8 00000050			call	Display_Result
- 00000028  E8 00000000 E		call	Crlf
- 0000002D  BE 00000014 R		mov	esi,OFFSET pair2op1		; first operand
- 00000032  BF 0000001E R		mov	edi,OFFSET pair2op2		; second operand
- 00000037  BB 00000028 R		mov	ebx,OFFSET result		; result operand
- 0000003C  B9 0000000A			mov	ecx,LENGTHOF pair2op1	; number of bytes
- 00000041  E8 0000001B			call	Extended_Sub
- 00000046  BE 00000028 R		mov	esi,OFFSET result		; display the result
- 0000004B  B9 0000000B			mov	ecx,LENGTHOF result
- 00000050  E8 00000023			call	Display_Result
- 00000055  E8 00000000 E		call	Crlf
+ 00000000  BA 00000014 R		mov	edx,OFFSET plain
+ 00000005  E8 00000000 E		call	WriteString
+ 0000000A  BA 0000002F R		mov	edx,OFFSET buffer1
+ 0000000F  E8 00000000 E		call	WriteString
+ 00000014  E8 00000000 E		call	Crlf
+ 00000019  BE 0000002F R		mov	esi,OFFSET buffer1
+ 0000001E  BF 00000000 R		mov	edi,OFFSET key1
+ 00000023  B9 00000018			mov	ecx,SIZEOF buffer1
+ 00000028  E8 00000052			call	TranslateBuffer	; encrypt the buffer
+ 0000002D  BA 00000021 R		mov	edx,OFFSET cipher	; display encrypted message
+ 00000032  BE 0000002F R		mov	esi,OFFSET buffer1
+ 00000037  E8 00000070			call	DisplayMessage
+
+ 0000003C  BA 00000014 R		mov	edx,OFFSET plain
+ 00000041  E8 00000000 E		call	WriteString
+ 00000046  BA 00000047 R		mov	edx,OFFSET buffer2
+ 0000004B  E8 00000000 E		call	WriteString
+ 00000050  E8 00000000 E		call	Crlf
+ 00000055  BE 00000047 R		mov	esi,OFFSET buffer2
+ 0000005A  BF 0000000A R		mov	edi,OFFSET key2
+ 0000005F  B9 0000001C			mov	ecx,SIZEOF buffer2
+ 00000064  E8 00000016			call	TranslateBuffer	; encrypt the buffer
+ 00000069  BA 00000021 R		mov	edx,OFFSET cipher	; display encrypted message
+ 0000006E  BE 00000047 R		mov	esi,OFFSET buffer2
+ 00000073  E8 00000034			call	DisplayMessage
 					exit
- 00000061			main ENDP
+ 0000007F			main ENDP
 
-				; This procedure subtracts two extended integers stored as arrays of bytes.
-				; Receives:	ESI and EDI point to the two integers,
-				;			EBX points to a variable that will hold the result,
-				;			ECX indicates the number of bytes to be subtracted
- 00000061			Extended_Sub PROC
- 00000061  60				pushad
- 00000062  F8				clc		; clear the Carry flag
- 00000063			SubtractEachByte:
- 00000063  8A 06			mov	al,[esi]			; get the first integer
- 00000065  1A 07			sbb	al,[edi]			; subtract the second integer
- 00000067  9C				pushfd				; save the Carry flag
- 00000068  88 03			mov	[ebx],al			; store partial result
- 0000006A  46				inc	esi				; increment pointers
- 0000006B  47				inc	edi
- 0000006C  43				inc	ebx
- 0000006D  9D				popfd				; restore the Carry flag
- 0000006E  E2 F3			loop	SubtractEachByte
- 00000070  C6 03 00			mov	BYTE PTR [ebx],0	; clear high byte of result
- 00000073  80 1B 00			sbb	BYTE PTR [ebx],0	; subtract any leftover carry
- 00000076  61				popad
- 00000077  C3				ret
- 00000078			Extended_Sub ENDP
+				; This procedure performs simple encryption by rotating each plaintext
+				; byte a varying number of positions in different directions.
+				; Receives:	ESI = points to the buffer, EDI = points to the key,
+				;			ECX = size of buffer
+ 0000007F			TranslateBuffer PROC
+ 0000007F  60				pushad
+ 00000080  BA 00000000			mov	edx,0
+ 00000085			TranslateBytes:
+ 00000085  51				push	ecx
+ 00000086  8A 0C 17			mov	cl,[edi + edx]	; AL = current character in key
+ 00000089  42				inc	edx			; next character in key
+ 0000008A  81 FA 0000000A		cmp	edx,keySize	; is EDI >= SIZEOF key ?
+ 00000090  72 06			jb	Continue		; if not, continue
+ 00000092  81 EA 0000000A		sub	edx,keySize	; if yes, reset EDI tofirst char of key
+ 00000098			Continue:
+ 00000098  0A C9			or	cl,cl		; set Zero and Sign flags
+ 0000009A  74 0A			je	Done			; if Zero flag is set, CL = 0
+ 0000009C  78 04			js	IsNegative	; if Sign flag is set, CL < 0
+ 0000009E  D2 0E			ror	BYTE PTR [esi],cl	; CL > 0 so rotate right
+ 000000A0  EB 04			jmp	Done
+ 000000A2			IsNegative:
+ 000000A2  F6 D9			neg	cl			; CL < 0 so rotate left
+ 000000A4  D2 06			rol	BYTE PTR [esi],cl
+ 000000A6			Done:
+ 000000A6  46				inc	esi			; point to the next byte
+ 000000A7  59				pop	ecx
+ 000000A8  E2 DB			loop	TranslateBytes
+ 000000AA  61				popad
+ 000000AB  C3				ret
+ 000000AC			TranslateBuffer ENDP
 
-				; This procedure displays the result in its proper order, starting with
-				; the high-order byte, and working its way down to the low-order byte.
-				; Receives:	ESI points to a variable that contains the result,
-				;l			ECX indicates the number of bytes in the result
- 00000078			Display_Result PROC
- 00000078  60				pushad
- 00000079  03 F1			add	esi,ecx			; point to the last array element
- 0000007B  83 EE 01			sub	esi,TYPE BYTE
- 0000007E  BB 00000001			mov	ebx,TYPE BYTE
- 00000083			DisplayEachByte:
- 00000083  8A 06			mov	al,[esi]			; get an array byte
- 00000085  E8 00000000 E		call	WriteHexB			; display it
- 0000008A  83 EE 01			sub	esi,TYPE BYTE		; point to the previous byte
- 0000008D  E2 F4			loop	DisplayEachByte
- 0000008F  61				popad
- 00000090  C3				ret
- 00000091			Display_Result ENDP
+				; This procedure displays the encrypted or decrypted message.
+				; Receives:	EDX points to the message, ESI points to the buffer
+ 000000AC			DisplayMessage PROC
+ 000000AC  60				pushad
+ 000000AD  E8 00000000 E		call	WriteString
+ 000000B2  8B D6			mov	edx,esi		; display the buffer
+ 000000B4  E8 00000000 E		call	WriteString
+ 000000B9  E8 00000000 E		call	Crlf
+ 000000BE  61				popad
+ 000000BF  C3				ret
+ 000000C0			DisplayMessage ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/20/18 12:01:33
-Extended Subtraction Procedur				     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/20/18 13:48:12
+"Encryption Using Rotate Operation			     Symbols 2 - 1
 
 
 
@@ -195,8 +215,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000033 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000091 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000063 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 000000C0 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -210,13 +230,10 @@ CreateFileA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 CreateOutputFile . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Crlf . . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Delay  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Display_Result . . . . . . . . .	P Near	 00000078 _TEXT	Length= 00000019 Public STDCALL
-  DisplayEachByte  . . . . . . .	L Near	 00000083 _TEXT	
+DisplayMessage . . . . . . . . .	P Near	 000000AC _TEXT	Length= 00000014 Public STDCALL
 DumpMem  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 DumpRegs . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ExitProcess  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-Extended_Sub . . . . . . . . . .	P Near	 00000061 _TEXT	Length= 00000017 Public STDCALL
-  SubtractEachByte . . . . . . .	L Near	 00000063 _TEXT	
 FileTimeToDosDateTime  . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FileTimeToSystemTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FlushConsoleInputBuffer  . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -289,6 +306,11 @@ Str_length . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 Str_trim . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Str_ucase  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 SystemTimeToFileTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+TranslateBuffer  . . . . . . . .	P Near	 0000007F _TEXT	Length= 0000002D Public STDCALL
+  TranslateBytes . . . . . . . .	L Near	 00000085 _TEXT	
+  Continue . . . . . . . . . . .	L Near	 00000098 _TEXT	
+  IsNegative . . . . . . . . . .	L Near	 000000A2 _TEXT	
+  Done . . . . . . . . . . . . .	L Near	 000000A6 _TEXT	
 WaitMsg  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteBinB  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteBin . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -307,7 +329,7 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000061 Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000007F Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -529,10 +551,16 @@ WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
+buffer1  . . . . . . . . . . . .	Byte	 0000002F _DATA	
+buffer2  . . . . . . . . . . . .	Byte	 00000047 _DATA	
+cipher . . . . . . . . . . . . .	Byte	 00000021 _DATA	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
+key1 . . . . . . . . . . . . . .	Byte	 00000000 _DATA	
+key2 . . . . . . . . . . . . . .	Byte	 0000000A _DATA	
+keySize  . . . . . . . . . . . .	Number	 0000000Ah   
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
@@ -540,12 +568,8 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-pair1op1 . . . . . . . . . . . .	Byte	 00000000 _DATA	
-pair1op2 . . . . . . . . . . . .	Byte	 0000000A _DATA	
-pair2op1 . . . . . . . . . . . .	Byte	 00000014 _DATA	
-pair2op2 . . . . . . . . . . . .	Byte	 0000001E _DATA	
+plain  . . . . . . . . . . . . .	Byte	 00000014 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-result . . . . . . . . . . . . .	Byte	 00000028 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   

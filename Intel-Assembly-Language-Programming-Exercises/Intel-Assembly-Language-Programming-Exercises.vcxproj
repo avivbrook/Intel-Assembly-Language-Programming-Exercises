@@ -219,7 +219,10 @@
     <MASM Include="7_1_DisplayASCIIDecimal.asm">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </MASM>
-    <MASM Include="7_2_ExtendedSubtractionProcedure.asm" />
+    <MASM Include="7_2_ExtendedSubtractionProcedure.asm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </MASM>
+    <MASM Include="7_4_EncryptionUsingRotateOperations.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
