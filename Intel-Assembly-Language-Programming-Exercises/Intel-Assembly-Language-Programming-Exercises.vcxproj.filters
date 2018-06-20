@@ -94,5 +94,8 @@
     <MASM Include="6_4_CollegeRegistration.asm">
       <Filter>Source Files\Chapter6</Filter>
     </MASM>
+    <MASM Include="6_5-6_BooleanCalculator.asm">
+      <Filter>Source Files\Chapter6</Filter>
+    </MASM>
   </ItemGroup>
 </Project>
