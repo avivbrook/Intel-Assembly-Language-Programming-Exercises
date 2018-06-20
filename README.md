@@ -6,10 +6,8 @@ This project contains solutions to programming exercises from [Assembly Language
 
 ### Prerequisites
 
-```
 [Click here](http://kipirvine.com/asm/gettingstartedvs2015/Irvine.zip) to download the Irvine32 library used in the programs. Unzip the downloaded file into a directory named Irvine on Drive C.
 When installing Visual Studio, be sure to select Visual C++ under the *Programming Languages* category. If you forget to do this, you can always rerun the install file and modify the existing installation.
-```
 
 ### Installing
 
