@@ -1,10 +1,9 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/19/18 19:52:27
-Probabilities and Colour				     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/19/18 20:36:34
+Message Encryptio					     Page 1 - 1
 
 
-				TITLE Probabilities and Colours
-				; This program randomly chooses amongst three different colours for
-				; displaying text on the screen.
+				TITLE Message Encryption
+
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -24,50 +23,92 @@ Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/19/18 19:52:27
 			      C .LIST
 			      C 
 
+ = 00000080			BUFMAX = 128	; maximum buffer size
+
  00000000			.DATA
- 00000000 54 68 69 73 20	text	BYTE	"This is string will randomly change colours!",0Dh,0Ah,0
-	   69 73 20 73 74
-	   72 69 6E 67 20
-	   77 69 6C 6C 20
-	   72 61 6E 64 6F
-	   6D 6C 79 20 63
-	   68 61 6E 67 65
-	   20 63 6F 6C 6F
-	   75 72 73 21 0D
-	   0A 00
+ 00000000 45 6E 74 65 72	sPrompt	BYTE		"Enter the plain text:	",0
+	   20 74 68 65 20
+	   70 6C 61 69 6E
+	   20 74 65 78 74
+	   3A 09 00
+ 00000017 43 69 70 68 65	sEncrypt	BYTE		"Cipher text:		",0
+	   72 20 74 65 78
+	   74 3A 09 09 00
+ 00000026 44 65 63 72 79	sDecrypt	BYTE		"Decrypted:		",0
+	   70 74 65 64 3A
+	   09 09 00
+ 00000033  00000081 [		buffer	BYTE		BUFMAX+1 DUP(0)
+	    00
+	   ]
+ 000000B4 41 42 58 6D 76	key		BYTE		"ABXmv#7"
+	   23 37
+
+ 00000000			.DATA?
+ 00000000 00000000		bufSize	DWORD	?
 
  00000000			.CODE
  00000000			main PROC
- 00000000  E8 00000000 E		call	Randomize
- 00000005  B9 00000014			mov	ecx,20					; 20 lines of text
- 0000000A			PrintText:
- 0000000A  B8 0000000A			mov	eax,10					; generate a random integer between 0 and 9
- 0000000F  E8 00000000 E		call	RandomRange
- 00000014  83 F8 02			cmp	eax,2					; 0 <= EAX <= 2 ?
- 00000017  77 07			ja	NotWhite
- 00000019  B8 0000000F			mov	eax,white + (black * 16)		; white = 30% probability
- 0000001E  EB 11			jmp	done
- 00000020			NotWhite:
- 00000020  83 F8 03			cmp	eax,3					; EAX == 3 ?
- 00000023  75 07			jne	NotBlue
- 00000025  B8 00000001			mov	eax,blue + (black * 16)		; blue = 10% probability
- 0000002A  EB 05			jmp	done
- 0000002C			NotBlue:							; 4 <= EAX <= 9 ?
- 0000002C  B8 00000002				mov	eax,green + (black * 16)	; green = 60% probability
- 00000031			done:
- 00000031  E8 00000000 E		call	SetTextColor
- 00000036  BA 00000000 R		mov	edx,OFFSET text
- 0000003B  E8 00000000 E		call	WriteString
- 00000040  E2 C8			loop	PrintText
-
- 00000042  B8 00000007			mov	eax,lightGray + (black * 16)	; reset text colour
- 00000047  E8 00000000 E		call	SetTextColor
- 0000004C  E8 00000000 E		call	Crlf
+ 00000000  E8 00000025			call	InputTheString		; input the plain text
+ 00000005  E8 00000062			call	TranslateBuffer	; encrypt the buffer
+ 0000000A  BA 00000017 R		mov	edx,OFFSET sEncrypt	; display encrypted message
+ 0000000F  E8 0000003C			call	DisplayMessage
+ 00000014  E8 00000053			call	TranslateBuffer	; decrypt the buffer
+ 00000019  BA 00000026 R		mov	edx,OFFSET sDecrypt	; display decrypted message
+ 0000001E  E8 0000002D			call	DisplayMessage
 					exit
- 00000058			main ENDP
+ 0000002A			main ENDP
+
+				; This procedure prompts the user for a plaintext string and saves the
+				; string and its length.
+ 0000002A			InputTheString PROC
+ 0000002A  60				pushad				; save 32-bit registers
+ 0000002B  BA 00000000 R		mov	edx,OFFSET sPrompt	; display a prompt
+ 00000030  E8 00000000 E		call	WriteString
+ 00000035  B9 00000080			mov	ecx,BUFMAX		; maximum character count
+ 0000003A  BA 00000033 R		mov	edx,OFFSET buffer	; point to the buffer
+ 0000003F  E8 00000000 E		call	ReadString		; input the string
+ 00000044  A3 00000000 R		mov	bufSize,eax		; save the length
+ 00000049  E8 00000000 E		call	Crlf
+ 0000004E  61				popad
+ 0000004F  C3				ret
+ 00000050			InputTheString	ENDP
+
+				; This procedure displays the encrypted or decrypted message.
+				; Receives:	EDX points to the message
+ 00000050			DisplayMessage PROC
+ 00000050  60				pushad
+ 00000051  E8 00000000 E		call	WriteString
+ 00000056  BA 00000033 R		mov	edx,OFFSET buffer	; display the buffer
+ 0000005B  E8 00000000 E		call	WriteString
+ 00000060  E8 00000000 E		call	Crlf
+ 00000065  E8 00000000 E		call	Crlf
+ 0000006A  61				popad
+ 0000006B  C3				ret
+ 0000006C			DisplayMessage ENDP
+
+				; This procedure translates the string by exlusive-ORing each byte with
+				; the encryption key byte.
+ 0000006C			TranslateBuffer PROC
+ 0000006C  60				pushad
+ 0000006D  8B 0D 00000000 R		mov	ecx,bufSize	; loop counter
+ 00000073  BE 00000000			mov	esi,0		; index 0 in buffer
+ 00000078  BF 00000000			mov	edi,0		; index 0 in key
+ 0000007D			TranslateBytes:
+ 0000007D  8A 87 000000B4 R		mov	al,key[edi]	; AL = current character in key
+ 00000083  47				inc	edi			; next character in key
+ 00000084  83 FF 07			cmp	edi,SIZEOF key	; is EDI >= SIZEOF key ?
+ 00000087  72 03			jb	Continue		; if not, continue
+ 00000089  83 EF 07			sub	edi,SIZEOF key	; if yes, reset EDI tofirst char of key
+ 0000008C			Continue:
+ 0000008C  30 86 00000033 R		xor	buffer[esi],al	; translate a byte
+ 00000092  46				inc	esi			; point to the next byte
+ 00000093  E2 E8			loop	TranslateBytes
+ 00000095  61				popad
+ 00000096  C3				ret
+ 00000097			TranslateBuffer ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/19/18 19:52:27
-Probabilities and Colour				     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/19/18 20:36:34
+Message Encryptio					     Symbols 2 - 1
 
 
 
@@ -160,8 +201,9 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 0000002F Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000058 Para	  Public  'CODE'	
+_BSS . . . . . . . . . . . . . .	32 Bit	 00000004 Para	  Public  'BSS'  
+_DATA  . . . . . . . . . . . . .	32 Bit	 000000BB Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000097 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -175,6 +217,7 @@ CreateFileA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 CreateOutputFile . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Crlf . . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Delay  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+DisplayMessage . . . . . . . . .	P Near	 00000050 _TEXT	Length= 0000001C Public STDCALL
 DumpMem  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 DumpRegs . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ExitProcess  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -207,6 +250,7 @@ HeapCreate . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 HeapDestroy  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 HeapFree . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 HeapSize . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+InputTheString . . . . . . . . .	P Near	 0000002A _TEXT	Length= 00000026 Public STDCALL
 IsDigit  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 LocalFree  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 MessageBoxA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -250,6 +294,9 @@ Str_length . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 Str_trim . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Str_ucase  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 SystemTimeToFileTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+TranslateBuffer  . . . . . . . .	P Near	 0000006C _TEXT	Length= 0000002B Public STDCALL
+  TranslateBytes . . . . . . . .	L Near	 0000007D _TEXT	
+  Continue . . . . . . . . . . .	L Near	 0000008C _TEXT	
 WaitMsg  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteBinB  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteBin . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -268,11 +315,7 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000058 Public STDCALL
-  PrintText  . . . . . . . . . .	L Near	 0000000A _TEXT	
-  NotWhite . . . . . . . . . . .	L Near	 00000020 _TEXT	
-  NotBlue  . . . . . . . . . . .	L Near	 0000002C _TEXT	
-  done . . . . . . . . . . . . .	L Near	 00000031 _TEXT	
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000002A Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -292,6 +335,7 @@ Symbols:
 @fardata . . . . . . . . . . . .	Text   	 FLAT
 @stack . . . . . . . . . . . . .	Text   	 FLAT
 ALT_MASK . . . . . . . . . . . .	Number	 00000003h   
+BUFMAX . . . . . . . . . . . . .	Number	 00000080h   
 CAPSLOCK_ON  . . . . . . . . . .	Number	 00000080h   
 CREATE_ALWAYS  . . . . . . . . .	Number	 00000002h   
 CREATE_NEW . . . . . . . . . . .	Number	 00000001h   
@@ -494,10 +538,13 @@ WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
+bufSize  . . . . . . . . . . . .	DWord	 00000000 _BSS	
+buffer . . . . . . . . . . . . .	Byte	 00000033 _DATA	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
+key  . . . . . . . . . . . . . .	Byte	 000000B4 _DATA	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
@@ -506,7 +553,9 @@ lightMagenta . . . . . . . . . .	Number	 0000000Dh
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-text . . . . . . . . . . . . . .	Byte	 00000000 _DATA	
+sDecrypt . . . . . . . . . . . .	Byte	 00000026 _DATA	
+sEncrypt . . . . . . . . . . . .	Byte	 00000017 _DATA	
+sPrompt  . . . . . . . . . . . .	Byte	 00000000 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   

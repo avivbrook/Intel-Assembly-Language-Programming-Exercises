@@ -100,5 +100,8 @@
     <MASM Include="6_7_ProbabilitiesandColours.asm">
       <Filter>Source Files\Chapter6</Filter>
     </MASM>
+    <MASM Include="6_8_MessageEncryption.asm">
+      <Filter>Source Files\Chapter6</Filter>
+    </MASM>
   </ItemGroup>
 </Project>
