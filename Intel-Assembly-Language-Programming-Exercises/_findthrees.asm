@@ -16,15 +16,18 @@ FindThrees PROC,
 	mov	counter,0
 TraverseArray:
 	mov	eax,[esi]
-	.IF eax == 3
-		inc	counter
-	.ELSE
-		mov	counter,0
-	.ENDIF
-	.IF counter == 3
-		mov	eax,1
-		jmp	done
-	.ENDIF
+	cmp	eax,3
+	jne	Not3
+	inc	counter
+	jmp	Is3
+Not3:
+	mov	counter,0
+Is3:
+	cmp	counter,3
+	jne	Increment
+	mov	eax,1
+	jmp	done
+Increment:
 	add	esi,TYPE DWORD
 	loop	TraverseArray
 	mov	eax,0
