@@ -222,7 +222,15 @@
     <MASM Include="7_2_ExtendedSubtractionProcedure.asm">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </MASM>
-    <MASM Include="7_4_EncryptionUsingRotateOperations.asm" />
+    <MASM Include="7_4_EncryptionUsingRotateOperations.asm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </MASM>
+    <MASM Include="Largest_main.asm" />
+    <MASM Include="_display.asm" />
+    <MASM Include="_findlargest.asm" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="largest.inc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

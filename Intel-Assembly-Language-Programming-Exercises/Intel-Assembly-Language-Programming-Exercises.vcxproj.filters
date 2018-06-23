@@ -1,122 +1,138 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Source Files\Chapter3">
+    <Filter Include="Chapter3">
       <UniqueIdentifier>{9e563c40-0f14-404e-99a9-970c8ee00f8e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Chapter4">
+    <Filter Include="Chapter4">
       <UniqueIdentifier>{aa1b131b-eabe-4284-b37d-49cbba044fe7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Chapter5">
+    <Filter Include="Chapter5">
       <UniqueIdentifier>{d2eba451-30e9-4a5b-a1f6-305d17929c22}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Chapter6">
+    <Filter Include="Chapter6">
       <UniqueIdentifier>{a7df512f-10a5-49ed-b5e3-b7222d7839fc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Chapter7">
+    <Filter Include="Chapter7">
       <UniqueIdentifier>{a8732510-67db-4360-93e8-1638bae4ab29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter8">
+      <UniqueIdentifier>{42345568-031a-423f-9d4e-e98bb90d720c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter8\1. FindLargest Procedure">
+      <UniqueIdentifier>{4f7c7dff-40f3-4d39-850c-cb1670e3f306}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="3_1_IntegerExpressionCalculation.asm">
-      <Filter>Source Files\Chapter3</Filter>
+      <Filter>Chapter3</Filter>
     </MASM>
     <MASM Include="3_2_SymbolicIntegerConstants.asm">
-      <Filter>Source Files\Chapter3</Filter>
+      <Filter>Chapter3</Filter>
     </MASM>
     <MASM Include="4_1_ConvertingfromBigEndiantoLittleEndian.asm">
-      <Filter>Source Files\Chapter4</Filter>
+      <Filter>Chapter4</Filter>
     </MASM>
     <MASM Include="4_2_ExchangingPairsofArrayValues.asm">
-      <Filter>Source Files\Chapter4</Filter>
+      <Filter>Chapter4</Filter>
     </MASM>
     <MASM Include="4_3_SummingtheGapsbetweenArrayValues.asm">
-      <Filter>Source Files\Chapter4</Filter>
+      <Filter>Chapter4</Filter>
     </MASM>
     <MASM Include="4_4_CopyingaWordArraytoaDoubleWordarray.asm">
-      <Filter>Source Files\Chapter4</Filter>
+      <Filter>Chapter4</Filter>
     </MASM>
     <MASM Include="4_5_FibonacciNumbers.asm">
-      <Filter>Source Files\Chapter4</Filter>
+      <Filter>Chapter4</Filter>
     </MASM>
     <MASM Include="4_6_ReverseanArray.asm">
-      <Filter>Source Files\Chapter4</Filter>
+      <Filter>Chapter4</Filter>
     </MASM>
     <MASM Include="4_7_CopyaStringinReverseOrder.asm">
-      <Filter>Source Files\Chapter4</Filter>
+      <Filter>Chapter4</Filter>
     </MASM>
     <MASM Include="4_8_ShiftingtheElementsinanArray.asm">
-      <Filter>Source Files\Chapter4</Filter>
+      <Filter>Chapter4</Filter>
     </MASM>
     <MASM Include="5_1_DrawTextColours.asm">
-      <Filter>Source Files\Chapter5</Filter>
+      <Filter>Chapter5</Filter>
     </MASM>
     <MASM Include="5_2_LinkingArrayItems.asm">
-      <Filter>Source Files\Chapter5</Filter>
+      <Filter>Chapter5</Filter>
     </MASM>
     <MASM Include="5_3_SimpleAddition(1).asm">
-      <Filter>Source Files\Chapter5</Filter>
+      <Filter>Chapter5</Filter>
     </MASM>
     <MASM Include="5_4_SimpleAddition(2).asm">
-      <Filter>Source Files\Chapter5</Filter>
+      <Filter>Chapter5</Filter>
     </MASM>
     <MASM Include="5_5_BetterRandomRangeProcedure.asm">
-      <Filter>Source Files\Chapter5</Filter>
+      <Filter>Chapter5</Filter>
     </MASM>
     <MASM Include="5_6_RandomString.asm">
-      <Filter>Source Files\Chapter5</Filter>
+      <Filter>Chapter5</Filter>
     </MASM>
     <MASM Include="5_7_RandomScreenLocations.asm">
-      <Filter>Source Files\Chapter5</Filter>
+      <Filter>Chapter5</Filter>
     </MASM>
     <MASM Include="5_8_ColourMatrix.asm">
-      <Filter>Source Files\Chapter5</Filter>
+      <Filter>Chapter5</Filter>
     </MASM>
     <MASM Include="5_9_RecursiveProcedure.asm">
-      <Filter>Source Files\Chapter5</Filter>
+      <Filter>Chapter5</Filter>
     </MASM>
     <MASM Include="5_10_FibonacciGenerator.asm">
-      <Filter>Source Files\Chapter5</Filter>
+      <Filter>Chapter5</Filter>
     </MASM>
     <MASM Include="5_11_FindingMultiplesofK.asm">
-      <Filter>Source Files\Chapter5</Filter>
+      <Filter>Chapter5</Filter>
     </MASM>
     <MASM Include="6_1_FillinganArray.asm">
-      <Filter>Source Files\Chapter6</Filter>
+      <Filter>Chapter6</Filter>
     </MASM>
     <MASM Include="6_2_SummingArrayElementsinaRange.asm">
-      <Filter>Source Files\Chapter6</Filter>
+      <Filter>Chapter6</Filter>
     </MASM>
     <MASM Include="6_3_TestScoreEvaluation.asm">
-      <Filter>Source Files\Chapter6</Filter>
+      <Filter>Chapter6</Filter>
     </MASM>
     <MASM Include="6_4_CollegeRegistration.asm">
-      <Filter>Source Files\Chapter6</Filter>
+      <Filter>Chapter6</Filter>
     </MASM>
     <MASM Include="6_5-6_BooleanCalculator.asm">
-      <Filter>Source Files\Chapter6</Filter>
+      <Filter>Chapter6</Filter>
     </MASM>
     <MASM Include="6_7_ProbabilitiesandColours.asm">
-      <Filter>Source Files\Chapter6</Filter>
+      <Filter>Chapter6</Filter>
     </MASM>
     <MASM Include="6_8_MessageEncryption.asm">
-      <Filter>Source Files\Chapter6</Filter>
+      <Filter>Chapter6</Filter>
     </MASM>
     <MASM Include="6_9_ValidatingaPIN.asm">
-      <Filter>Source Files\Chapter6</Filter>
+      <Filter>Chapter6</Filter>
     </MASM>
     <MASM Include="7_1_DisplayASCIIDecimal.asm">
-      <Filter>Source Files\Chapter7</Filter>
+      <Filter>Chapter7</Filter>
     </MASM>
     <MASM Include="7_2_ExtendedSubtractionProcedure.asm">
-      <Filter>Source Files\Chapter7</Filter>
+      <Filter>Chapter7</Filter>
     </MASM>
     <MASM Include="7_4_EncryptionUsingRotateOperations.asm">
-      <Filter>Source Files\Chapter7</Filter>
+      <Filter>Chapter7</Filter>
     </MASM>
+    <MASM Include="_findlargest.asm">
+      <Filter>Chapter8\1. FindLargest Procedure</Filter>
+    </MASM>
+    <MASM Include="Largest_main.asm">
+      <Filter>Chapter8\1. FindLargest Procedure</Filter>
+    </MASM>
+    <MASM Include="_display.asm">
+      <Filter>Chapter8\1. FindLargest Procedure</Filter>
+    </MASM>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="largest.inc">
+      <Filter>Chapter8\1. FindLargest Procedure</Filter>
+    </None>
   </ItemGroup>
 </Project>
