@@ -19,11 +19,14 @@
     <Filter Include="Chapter8">
       <UniqueIdentifier>{42345568-031a-423f-9d4e-e98bb90d720c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Chapter8\1. FindLargest Procedure">
-      <UniqueIdentifier>{4f7c7dff-40f3-4d39-850c-cb1670e3f306}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Chapter8\2. Chess Board">
       <UniqueIdentifier>{0b56d321-2cd7-466f-86ff-69ed08858a31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter8\FindThrees">
+      <UniqueIdentifier>{286e86e1-2212-4d7f-ae9f-2b5fc6777769}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter8\1. FindLargest">
+      <UniqueIdentifier>{4f7c7dff-40f3-4d39-850c-cb1670e3f306}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -124,13 +127,13 @@
       <Filter>Chapter7</Filter>
     </MASM>
     <MASM Include="_findlargest.asm">
-      <Filter>Chapter8\1. FindLargest Procedure</Filter>
+      <Filter>Chapter8\1. FindLargest</Filter>
     </MASM>
     <MASM Include="Largest_main.asm">
-      <Filter>Chapter8\1. FindLargest Procedure</Filter>
+      <Filter>Chapter8\1. FindLargest</Filter>
     </MASM>
     <MASM Include="_display.asm">
-      <Filter>Chapter8\1. FindLargest Procedure</Filter>
+      <Filter>Chapter8\1. FindLargest</Filter>
     </MASM>
     <MASM Include="Board_main.asm">
       <Filter>Chapter8\2. Chess Board</Filter>
@@ -144,13 +147,22 @@
     <MASM Include="_drawboard.asm">
       <Filter>Chapter8\2. Chess Board</Filter>
     </MASM>
+    <MASM Include="_findthrees.asm">
+      <Filter>Chapter8\FindThrees</Filter>
+    </MASM>
+    <MASM Include="Threes_main.asm">
+      <Filter>Chapter8\FindThrees</Filter>
+    </MASM>
   </ItemGroup>
   <ItemGroup>
     <None Include="largest.inc">
-      <Filter>Chapter8\1. FindLargest Procedure</Filter>
+      <Filter>Chapter8\1. FindLargest</Filter>
     </None>
     <None Include="board.inc">
       <Filter>Chapter8\2. Chess Board</Filter>
+    </None>
+    <None Include="threes.inc">
+      <Filter>Chapter8\FindThrees</Filter>
     </None>
   </ItemGroup>
 </Project>

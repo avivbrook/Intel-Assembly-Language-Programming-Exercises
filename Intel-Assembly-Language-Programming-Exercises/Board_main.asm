@@ -4,8 +4,6 @@
 ; squares.
 INCLUDE board.inc
 
-; 0 1 2 3 4 5 6 7
-; g w g w g w g w
 .CODE
 main PROC
 	call		Clrscr
