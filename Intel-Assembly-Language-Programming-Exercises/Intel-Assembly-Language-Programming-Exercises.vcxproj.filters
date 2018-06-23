@@ -22,6 +22,9 @@
     <Filter Include="Chapter8\1. FindLargest Procedure">
       <UniqueIdentifier>{4f7c7dff-40f3-4d39-850c-cb1670e3f306}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Chapter8\2. Chess Board">
+      <UniqueIdentifier>{0b56d321-2cd7-466f-86ff-69ed08858a31}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="3_1_IntegerExpressionCalculation.asm">
@@ -129,10 +132,25 @@
     <MASM Include="_display.asm">
       <Filter>Chapter8\1. FindLargest Procedure</Filter>
     </MASM>
+    <MASM Include="Board_main.asm">
+      <Filter>Chapter8\2. Chess Board</Filter>
+    </MASM>
+    <MASM Include="_drawrow.asm">
+      <Filter>Chapter8\2. Chess Board</Filter>
+    </MASM>
+    <MASM Include="_drawsquare.asm">
+      <Filter>Chapter8\2. Chess Board</Filter>
+    </MASM>
+    <MASM Include="_drawboard.asm">
+      <Filter>Chapter8\2. Chess Board</Filter>
+    </MASM>
   </ItemGroup>
   <ItemGroup>
     <None Include="largest.inc">
       <Filter>Chapter8\1. FindLargest Procedure</Filter>
+    </None>
+    <None Include="board.inc">
+      <Filter>Chapter8\2. Chess Board</Filter>
     </None>
   </ItemGroup>
 </Project>

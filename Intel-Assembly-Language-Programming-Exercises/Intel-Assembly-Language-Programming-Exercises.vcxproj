@@ -225,12 +225,25 @@
     <MASM Include="7_4_EncryptionUsingRotateOperations.asm">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </MASM>
-    <MASM Include="Largest_main.asm" />
-    <MASM Include="_display.asm" />
-    <MASM Include="_findlargest.asm" />
+    <MASM Include="Board_main.asm" />
+    <MASM Include="Largest_main.asm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </MASM>
+    <MASM Include="_display.asm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </MASM>
+    <MASM Include="_drawboard.asm" />
+    <MASM Include="_drawrow.asm" />
+    <MASM Include="_drawsquare.asm" />
+    <MASM Include="_findlargest.asm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </MASM>
   </ItemGroup>
   <ItemGroup>
-    <None Include="largest.inc" />
+    <None Include="board.inc" />
+    <None Include="largest.inc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
