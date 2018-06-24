@@ -1,12 +1,9 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/23/18 21:28:21
-$Parity Checking	(ParityChecking.asm		     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/23/18 22:31:04
+Packed Decimal Conversio				     Page 1 - 1
 
 
-				TITLE Parity Checking	(ParityChecking.asm)
-
-				; This program calculates the parity (even or odd) of the bytes in an
-				; array.
-
+				TITLE Packed Decimal Conversion
+				; This program converts packed decimal to ASCII.
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -26,59 +23,85 @@ $Parity Checking	(ParityChecking.asm		     Page 1 - 1
 			      C .LIST
 			      C 
 
- = 00000001			True = 1
- = 00000000			False = 0
-
  00000000			.DATA
- 00000000 01 02 03 04 01	array1	BYTE	1,2,3,4,1,20,35,-12,66,4,6	; odd array
-	   14 23 F4 42 04
-	   06
- 0000000B 04 02 06 08 0A	array2	BYTE	4,2,6,8,10,12,14,16,22,56,44	; even array
-	   0C 0E 10 16 38
-	   2C
+ 00000000 12345678		pdi1		DWORD	12345678h	; 12,345,678 decimal
+ 00000004 08723654		pdi2		DWORD	08723654h	; 8,723,654 decimal
+ 00000008 23456739		pdi3		DWORD	23456739h	; 23,456,739 decimal
+ 0000000C 28737285		pdi4		DWORD	28737285h	; 28,737,285 decimal
+ 00000010 93450237		pdi5		DWORD	93450237h	; 93,450,237 decimal
+ 00000014  00000008 [		buffer	BYTE		8 DUP(0),0
+	    00
+	   ] 00
 
  00000000			.CODE
  00000000			main PROC
- 00000000  BB 00000000 R		mov	ebx,OFFSET array1	; point to the array
- 00000005  B9 0000000B			mov	ecx,SIZEOF array1	; loop counter
- 0000000A  E8 0000002A			call	CheckParity
- 0000000F  E8 00000000 E		call	WriteInt
- 00000014  E8 00000000 E		call	Crlf
- 00000019  BB 0000000B R		mov	ebx,OFFSET array2	; point to the array
- 0000001E  B9 0000000B			mov	ecx,SIZEOF array2	; loop counter
- 00000023  E8 00000011			call	CheckParity
- 00000028  E8 00000000 E		call	WriteInt
- 0000002D  E8 00000000 E		call	Crlf
-					exit
- 00000039			main ENDP
+ 00000000  8B 15 00000000 R		mov	edx,pdi1			; EDX = packed decimal integer
+ 00000006  BE 00000014 R		mov	esi,OFFSET buffer	; points to the buffer
+ 0000000B  E8 00000092			call	PackedToAsc		; do the conversion
+ 00000010  BA 00000014 R		mov	edx,OFFSET buffer	; display the buffer
+ 00000015  E8 00000000 E		call	WriteString		; output: 12345678
+ 0000001A  E8 00000000 E		call	Crlf
 
-				;-----------------------------------------------
- 00000039			CheckParity PROC USES ebx ecx
+ 0000001F  8B 15 00000004 R		mov	edx,pdi2
+ 00000025  BE 00000014 R		mov	esi,OFFSET buffer
+ 0000002A  E8 00000073			call	PackedToAsc
+ 0000002F  BA 00000014 R		mov	edx,OFFSET buffer
+ 00000034  E8 00000000 E		call	WriteString		; output: 08723654
+ 00000039  E8 00000000 E		call	Crlf
+
+ 0000003E  8B 15 00000008 R		mov	edx,pdi3
+ 00000044  BE 00000014 R		mov	esi,OFFSET buffer
+ 00000049  E8 00000054			call	PackedToAsc
+ 0000004E  BA 00000014 R		mov	edx,OFFSET buffer
+ 00000053  E8 00000000 E		call	WriteString		; output: 23456739
+ 00000058  E8 00000000 E		call	Crlf
+
+ 0000005D  8B 15 0000000C R		mov	edx,pdi4
+ 00000063  BE 00000014 R		mov	esi,OFFSET buffer
+ 00000068  E8 00000035			call	PackedToAsc
+ 0000006D  BA 00000014 R		mov	edx,OFFSET buffer
+ 00000072  E8 00000000 E		call	WriteString		; output: 28737285
+ 00000077  E8 00000000 E		call	Crlf
+
+ 0000007C  8B 15 00000010 R		mov	edx,pdi5
+ 00000082  BE 00000014 R		mov	esi,OFFSET buffer
+ 00000087  E8 00000016			call	PackedToAsc
+ 0000008C  BA 00000014 R		mov	edx,OFFSET buffer
+ 00000091  E8 00000000 E		call	WriteString		; output: 93450237
+ 00000096  E8 00000000 E		call	Crlf
+
+					exit
+ 000000A2			main ENDP
+
+				;---------------------------------------------------------
+ 000000A2			PackedToAsc PROC USES eax ecx edx
 				;
-				; Determines if there is an even or odd number of bits in the entire array.
-				; Receives: EBX points to the array, ECX = length of the array
-				; Returns: EAX = True if the parity is even, False if the parity is odd
-				;-----------------------------------------------------
- 0000003B  0F B6 03			movzx	eax,BYTE PTR [ebx]	; EAX = value of first byte
- 0000003E  83 F9 01			cmp		ecx,1			; arraySize <= 1 ?
- 00000041  7E 06			jle		DoneTraversing		; yes: jump straight to calculation
- 00000043  49				dec		ecx				; loop for SIZEOF array - 1
- 00000044			TraverseArray:
- 00000044  43				inc		ebx				; point to next byte
- 00000045  32 03			xor		al,BYTE PTR [ebx]	; xor the current value with next byte
- 00000047  E2 FB			loop		TraverseArray
- 00000049			DoneTraversing:
- 00000049  7B 07			jnp		OddParity
- 0000004B  B8 00000001			mov		eax,True
- 00000050  EB 05			jmp		next
- 00000052			OddParity:
- 00000052  B8 00000000				mov	eax,False
- 00000057			next:
+				; Converts a 4-byte packed decimal integer to a string of ASCII decimal
+				; digits.
+				; Receives: EDX = packed integer, ESI points to buffer
+				; Returns: buffer filled with ASCII binary digits
+				;---------------------------------------------------------
+ 000000A5  50				push	eax
+ 000000A6  51				push	ecx
+ 000000A7  52				push	edx
+
+ 000000A8  B9 00000008			mov	ecx,8			; ASCII stores one digit per byte
+ 000000AD			ConvertToASCII:
+ 000000AD  8A C2			mov	al,dl			; AL = two lowest digits
+ 000000AF  24 0F			and	al,0Fh			; clear 4 highest bits, AL = lowest digit
+ 000000B1  0C 30			or	al,30h			; convert unpacked to ASCII
+ 000000B3  88 44 0E FF			mov	[esi + ecx - 1],al	; add digit to buffer
+ 000000B7  C1 EA 04			shr	edx,4			; shift right 4 bits to current lowest digit
+ 000000BA  E2 F1			loop	ConvertToASCII
+
+ 000000BC  5A				pop	edx
+ 000000BD  59				pop	ecx
+ 000000BE  58				pop	eax
 					ret
- 0000005A			CheckParity ENDP
+ 000000C3			PackedToAsc ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/23/18 21:28:21
-$Parity Checking	(ParityChecking.asm		     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/23/18 22:31:04
+Packed Decimal Conversio				     Symbols 2 - 1
 
 
 
@@ -171,19 +194,14 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000016 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 0000005A Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 0000001D Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 000000C3 Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
 
                 N a m e                 Type     Value    Attr
 
-CheckParity  . . . . . . . . . .	P Near	 00000039 _TEXT	Length= 00000021 Public STDCALL
-  TraverseArray  . . . . . . . .	L Near	 00000044 _TEXT	
-  DoneTraversing . . . . . . . .	L Near	 00000049 _TEXT	
-  OddParity  . . . . . . . . . .	L Near	 00000052 _TEXT	
-  next . . . . . . . . . . . . .	L Near	 00000057 _TEXT	
 CloseFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 CloseHandle  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Clrscr . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -229,6 +247,8 @@ MessageBoxA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 MsgBoxAsk  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 MsgBox . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 OpenInputFile  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+PackedToAsc  . . . . . . . . . .	P Near	 000000A2 _TEXT	Length= 00000021 Public STDCALL
+  ConvertToASCII . . . . . . . .	L Near	 000000AD _TEXT	
 ParseDecimal32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ParseInteger32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 PeekConsoleInputA  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -284,7 +304,7 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000039 Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 000000A2 Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -503,11 +523,10 @@ VK_UP  . . . . . . . . . . . . .	Number	 00000026h
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
-array1 . . . . . . . . . . . . .	Byte	 00000000 _DATA	
-array2 . . . . . . . . . . . . .	Byte	 0000000B _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
+buffer . . . . . . . . . . . . .	Byte	 00000014 _DATA	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
 gray . . . . . . . . . . . . . .	Number	 00000008h   
@@ -519,6 +538,11 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
+pdi1 . . . . . . . . . . . . . .	DWord	 00000000 _DATA	
+pdi2 . . . . . . . . . . . . . .	DWord	 00000004 _DATA	
+pdi3 . . . . . . . . . . . . . .	DWord	 00000008 _DATA	
+pdi4 . . . . . . . . . . . . . .	DWord	 0000000C _DATA	
+pdi5 . . . . . . . . . . . . . .	DWord	 00000010 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA

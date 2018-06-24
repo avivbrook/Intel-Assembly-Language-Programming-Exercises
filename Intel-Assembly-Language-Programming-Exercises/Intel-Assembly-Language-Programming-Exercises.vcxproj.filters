@@ -156,6 +156,9 @@
     <MASM Include="6_10_ParityChecking.asm">
       <Filter>Chapter6</Filter>
     </MASM>
+    <MASM Include="7_3_PackedDecimalConversion.asm">
+      <Filter>Chapter7</Filter>
+    </MASM>
   </ItemGroup>
   <ItemGroup>
     <None Include="largest.inc">

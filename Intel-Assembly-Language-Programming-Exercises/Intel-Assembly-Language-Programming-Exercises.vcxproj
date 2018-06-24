@@ -192,7 +192,9 @@
     <MASM Include="5_9_RecursiveProcedure.asm">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </MASM>
-    <MASM Include="6_10_ParityChecking.asm" />
+    <MASM Include="6_10_ParityChecking.asm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </MASM>
     <MASM Include="6_1_FillinganArray.asm">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </MASM>
@@ -223,6 +225,7 @@
     <MASM Include="7_2_ExtendedSubtractionProcedure.asm">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </MASM>
+    <MASM Include="7_3_PackedDecimalConversion.asm" />
     <MASM Include="7_4_EncryptionUsingRotateOperations.asm">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </MASM>

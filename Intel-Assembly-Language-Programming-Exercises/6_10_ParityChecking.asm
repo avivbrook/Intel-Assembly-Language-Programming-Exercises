@@ -1,4 +1,4 @@
-TITLE Parity Checking	(ParityChecking.asm)
+TITLE Parity Checking
 
 ; This program calculates the parity (even or odd) of the bytes in an
 ; array.
