@@ -1,11 +1,13 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/23/18 13:35:28
-_findthrees.asm						     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/23/18 21:26:30
+$Parity Checking	(ParityChecking.asm		     Page 1 - 1
 
 
-				; FindThrees Procedure	(_findthrees.asm)
-				INCLUDE threes.inc
-			      C ; Include file for the FindThrees Program	(threes.inc)
-			      C INCLUDE Irvine32.inc
+				TITLE Parity Checking	(ParityChecking.asm)
+
+				; This program calculates the parity (even or odd) of the bytes in an
+				; array.
+
+				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
 			      C ;OPTION CASEMAP:NONE		; optional: make identifiers case-sensitive
@@ -23,50 +25,54 @@ _findthrees.asm						     Page 1 - 1
 			      C .NOLIST
 			      C .LIST
 			      C 
-			      C 
-			      C FindThrees PROTO,
-			      C 	arrayPtr:PTR DWORD,
-			      C 	arraySize:DWORD
-			      C 
+
+ = 00000001			True = 1
+ = 00000000			False = 0
+
+ 00000000			.DATA
+ 00000000 01 02 03 04 01	array1	BYTE	1,2,3,4,1,20,35,-12,66,4,6
+	   14 23 F4 42 04
+	   06
+ 0000000B 04 02 06 08 0A	array2	BYTE	4,2,6,8,10,12,14,16,22,56,44
+	   0C 0E 10 16 38
+	   2C
 
  00000000			.CODE
-				;-----------------------------------------------------
- 00000000			FindThrees PROC,
-					arrayPtr:PTR DWORD,
-					arraySize:DWORD
-					LOCAL counter:DWORD
+ 00000000			main PROC
+ 00000000  BB 0000000B R		mov	ebx,OFFSET array2	; point to the array
+ 00000005  B9 0000000B			mov	ecx,SIZEOF array2	; loop counter
+ 0000000A  E8 0000000C			call	CheckParity
+ 0000000F  E8 00000000 E		call	WriteInt
+					exit
+ 0000001B			main ENDP
+
+				;-----------------------------------------------
+ 0000001B			CheckParity PROC USES ebx ecx
 				;
-				; Returns 1 if an array has three consecutive values of 3 somewhere in the
-				; array. Otherwise, return 0.
-				; Returns: EAX = result.
- 00000006  8B 75 08			mov	esi,arrayPtr
- 00000009  8B 4D 0C			mov	ecx,arraySize
- 0000000C  C7 45 FC			mov	counter,0
-	   00000000
- 00000013			TraverseArray:
- 00000013  8B 06			mov	eax,[esi]
- 00000015  83 F8 03			cmp	eax,3
- 00000018  75 05			jne	Not3
- 0000001A  FF 45 FC			inc	counter
- 0000001D  EB 07			jmp	Is3
- 0000001F			Not3:
- 0000001F  C7 45 FC			mov	counter,0
-	   00000000
- 00000026			Is3:
- 00000026  83 7D FC 03			cmp	counter,3
- 0000002A  75 07			jne	Increment
- 0000002C  B8 00000001			mov	eax,1
- 00000031  EB 0A			jmp	done
- 00000033			Increment:
- 00000033  83 C6 04			add	esi,TYPE DWORD
- 00000036  E2 DB			loop	TraverseArray
- 00000038  B8 00000000			mov	eax,0
- 0000003D			done:
+				; Determines if there is an even or odd number of bits in the entire array.
+				; Receives: EBX points to the array, ECX = length of the array
+				; Returns: EAX = True if the parity is even, False if the parity is odd
+				;-----------------------------------------------------
+ 0000001D  0F B6 03			movzx	eax,BYTE PTR [ebx]	; EAX = value of first byte
+ 00000020  83 F9 01			cmp		ecx,1			; arraySize <= 1 ?
+ 00000023  7E 06			jle		DoneTraversing		; yes: jump straight to calculation
+ 00000025  49				dec		ecx				; loop for SIZEOF array - 1
+ 00000026			TraverseArray:
+ 00000026  43				inc		ebx				; point to next byte
+ 00000027  32 03			xor		al,BYTE PTR [ebx]	; xor the current value with next byte
+ 00000029  E2 FB			loop		TraverseArray
+ 0000002B			DoneTraversing:
+ 0000002B  7B 07			jnp		OddParity
+ 0000002D  B8 00000001			mov		eax,True
+ 00000032  EB 05			jmp		next
+ 00000034			OddParity:
+ 00000034  B8 00000000				mov	eax,False
+ 00000039			next:
 					ret
- 00000041			FindThrees ENDP
-				END
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/23/18 13:35:28
-_findthrees.asm						     Symbols 2 - 1
+ 0000003C			CheckParity ENDP
+				END main
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/23/18 21:26:30
+$Parity Checking	(ParityChecking.asm		     Symbols 2 - 1
 
 
 
@@ -159,14 +165,19 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 00000000 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000041 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000016 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000003C Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
 
                 N a m e                 Type     Value    Attr
 
+CheckParity  . . . . . . . . . .	P Near	 0000001B _TEXT	Length= 00000021 Public STDCALL
+  TraverseArray  . . . . . . . .	L Near	 00000026 _TEXT	
+  DoneTraversing . . . . . . . .	L Near	 0000002B _TEXT	
+  OddParity  . . . . . . . . . .	L Near	 00000034 _TEXT	
+  next . . . . . . . . . . . . .	L Near	 00000039 _TEXT	
 CloseFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 CloseHandle  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Clrscr . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -179,15 +190,6 @@ DumpRegs . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 ExitProcess  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FileTimeToDosDateTime  . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FileTimeToSystemTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-FindThrees . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000041 Public STDCALL
-  arrayPtr . . . . . . . . . . .	DWord	 bp + 00000008
-  arraySize  . . . . . . . . . .	DWord	 bp + 0000000C
-  counter  . . . . . . . . . . .	DWord	 bp - 00000004
-  TraverseArray  . . . . . . . .	L Near	 00000013 _TEXT	
-  Not3 . . . . . . . . . . . . .	L Near	 0000001F _TEXT	
-  Is3  . . . . . . . . . . . . .	L Near	 00000026 _TEXT	
-  Increment  . . . . . . . . . .	L Near	 00000033 _TEXT	
-  done . . . . . . . . . . . . .	L Near	 0000003D _TEXT	
 FlushConsoleInputBuffer  . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FormatMessageA . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetCommandLineA  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -276,6 +278,7 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000001B Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -494,6 +497,8 @@ VK_UP  . . . . . . . . . . . . .	Number	 00000026h
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
+array1 . . . . . . . . . . . . .	Byte	 00000000 _DATA	
+array2 . . . . . . . . . . . . .	Byte	 0000000B _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   

@@ -153,6 +153,9 @@
     <MASM Include="Threes_main.asm">
       <Filter>Chapter8\FindThrees</Filter>
     </MASM>
+    <MASM Include="6_10_ParityChecking.asm">
+      <Filter>Chapter6</Filter>
+    </MASM>
   </ItemGroup>
   <ItemGroup>
     <None Include="largest.inc">
