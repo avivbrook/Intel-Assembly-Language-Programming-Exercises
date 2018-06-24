@@ -51,7 +51,7 @@ main PROC
 main ENDP
 
 ;---------------------------------------------------------
-PackedToAsc PROC USES eax ecx edx
+PackedToAsc PROC
 ;
 ; Converts a 4-byte packed decimal integer to a string of ASCII decimal
 ; digits.
