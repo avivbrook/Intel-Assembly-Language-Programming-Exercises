@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/23/18 21:26:30
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/23/18 21:28:21
 $Parity Checking	(ParityChecking.asm		     Page 1 - 1
 
 
@@ -30,48 +30,54 @@ $Parity Checking	(ParityChecking.asm		     Page 1 - 1
  = 00000000			False = 0
 
  00000000			.DATA
- 00000000 01 02 03 04 01	array1	BYTE	1,2,3,4,1,20,35,-12,66,4,6
+ 00000000 01 02 03 04 01	array1	BYTE	1,2,3,4,1,20,35,-12,66,4,6	; odd array
 	   14 23 F4 42 04
 	   06
- 0000000B 04 02 06 08 0A	array2	BYTE	4,2,6,8,10,12,14,16,22,56,44
+ 0000000B 04 02 06 08 0A	array2	BYTE	4,2,6,8,10,12,14,16,22,56,44	; even array
 	   0C 0E 10 16 38
 	   2C
 
  00000000			.CODE
  00000000			main PROC
- 00000000  BB 0000000B R		mov	ebx,OFFSET array2	; point to the array
- 00000005  B9 0000000B			mov	ecx,SIZEOF array2	; loop counter
- 0000000A  E8 0000000C			call	CheckParity
+ 00000000  BB 00000000 R		mov	ebx,OFFSET array1	; point to the array
+ 00000005  B9 0000000B			mov	ecx,SIZEOF array1	; loop counter
+ 0000000A  E8 0000002A			call	CheckParity
  0000000F  E8 00000000 E		call	WriteInt
+ 00000014  E8 00000000 E		call	Crlf
+ 00000019  BB 0000000B R		mov	ebx,OFFSET array2	; point to the array
+ 0000001E  B9 0000000B			mov	ecx,SIZEOF array2	; loop counter
+ 00000023  E8 00000011			call	CheckParity
+ 00000028  E8 00000000 E		call	WriteInt
+ 0000002D  E8 00000000 E		call	Crlf
 					exit
- 0000001B			main ENDP
+ 00000039			main ENDP
 
 				;-----------------------------------------------
- 0000001B			CheckParity PROC USES ebx ecx
+ 00000039			CheckParity PROC USES ebx ecx
 				;
 				; Determines if there is an even or odd number of bits in the entire array.
 				; Receives: EBX points to the array, ECX = length of the array
 				; Returns: EAX = True if the parity is even, False if the parity is odd
 				;-----------------------------------------------------
- 0000001D  0F B6 03			movzx	eax,BYTE PTR [ebx]	; EAX = value of first byte
- 00000020  83 F9 01			cmp		ecx,1			; arraySize <= 1 ?
- 00000023  7E 06			jle		DoneTraversing		; yes: jump straight to calculation
- 00000025  49				dec		ecx				; loop for SIZEOF array - 1
- 00000026			TraverseArray:
- 00000026  43				inc		ebx				; point to next byte
- 00000027  32 03			xor		al,BYTE PTR [ebx]	; xor the current value with next byte
- 00000029  E2 FB			loop		TraverseArray
- 0000002B			DoneTraversing:
- 0000002B  7B 07			jnp		OddParity
- 0000002D  B8 00000001			mov		eax,True
- 00000032  EB 05			jmp		next
- 00000034			OddParity:
- 00000034  B8 00000000				mov	eax,False
- 00000039			next:
+ 0000003B  0F B6 03			movzx	eax,BYTE PTR [ebx]	; EAX = value of first byte
+ 0000003E  83 F9 01			cmp		ecx,1			; arraySize <= 1 ?
+ 00000041  7E 06			jle		DoneTraversing		; yes: jump straight to calculation
+ 00000043  49				dec		ecx				; loop for SIZEOF array - 1
+ 00000044			TraverseArray:
+ 00000044  43				inc		ebx				; point to next byte
+ 00000045  32 03			xor		al,BYTE PTR [ebx]	; xor the current value with next byte
+ 00000047  E2 FB			loop		TraverseArray
+ 00000049			DoneTraversing:
+ 00000049  7B 07			jnp		OddParity
+ 0000004B  B8 00000001			mov		eax,True
+ 00000050  EB 05			jmp		next
+ 00000052			OddParity:
+ 00000052  B8 00000000				mov	eax,False
+ 00000057			next:
 					ret
- 0000003C			CheckParity ENDP
+ 0000005A			CheckParity ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/23/18 21:26:30
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/23/18 21:28:21
 $Parity Checking	(ParityChecking.asm		     Symbols 2 - 1
 
 
@@ -166,18 +172,18 @@ Segments and Groups:
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
 _DATA  . . . . . . . . . . . . .	32 Bit	 00000016 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 0000003C Para	  Public  'CODE'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000005A Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
 
                 N a m e                 Type     Value    Attr
 
-CheckParity  . . . . . . . . . .	P Near	 0000001B _TEXT	Length= 00000021 Public STDCALL
-  TraverseArray  . . . . . . . .	L Near	 00000026 _TEXT	
-  DoneTraversing . . . . . . . .	L Near	 0000002B _TEXT	
-  OddParity  . . . . . . . . . .	L Near	 00000034 _TEXT	
-  next . . . . . . . . . . . . .	L Near	 00000039 _TEXT	
+CheckParity  . . . . . . . . . .	P Near	 00000039 _TEXT	Length= 00000021 Public STDCALL
+  TraverseArray  . . . . . . . .	L Near	 00000044 _TEXT	
+  DoneTraversing . . . . . . . .	L Near	 00000049 _TEXT	
+  OddParity  . . . . . . . . . .	L Near	 00000052 _TEXT	
+  next . . . . . . . . . . . . .	L Near	 00000057 _TEXT	
 CloseFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 CloseHandle  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Clrscr . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -278,7 +284,7 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000001B Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000039 Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C

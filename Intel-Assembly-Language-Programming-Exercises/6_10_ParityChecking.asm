@@ -9,15 +9,21 @@ True = 1
 False = 0
 
 .DATA
-array1	BYTE	1,2,3,4,1,20,35,-12,66,4,6
-array2	BYTE	4,2,6,8,10,12,14,16,22,56,44
+array1	BYTE	1,2,3,4,1,20,35,-12,66,4,6	; odd array
+array2	BYTE	4,2,6,8,10,12,14,16,22,56,44	; even array
 
 .CODE
 main PROC
+	mov	ebx,OFFSET array1	; point to the array
+	mov	ecx,SIZEOF array1	; loop counter
+	call	CheckParity
+	call	WriteInt
+	call	Crlf
 	mov	ebx,OFFSET array2	; point to the array
 	mov	ecx,SIZEOF array2	; loop counter
 	call	CheckParity
 	call	WriteInt
+	call	Crlf
 	exit
 main ENDP
 
