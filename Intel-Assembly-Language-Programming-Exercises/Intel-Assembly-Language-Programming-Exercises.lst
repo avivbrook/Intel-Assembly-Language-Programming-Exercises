@@ -1,10 +1,9 @@
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/25/18 15:48:04
-Prime Number						     Page 1 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/25/18 17:14:31
+Greatest Common Diviso					     Page 1 - 1
 
 
-				TITLE Prime Numbers
-				; This program generates all prime numbers between 2 and 1000, using the
-				; Sieve of Eratosthenes method and displays them.
+				TITLE Greatest Common Divisor
+				; This program finds the greatest common divisor of two integers.
 				INCLUDE Irvine32.inc
 			      C ; Include file for Irvine32.lib             (Irvine32.inc)
 			      C 
@@ -24,61 +23,68 @@ Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/25/18 15:48:04
 			      C .LIST
 			      C 
 
- = 00000001			TRUE = 1
- = 00000000			FALSE = 0
- = 000003E8			n = 1000
- = 0000001F			sqrt_n = 31
-
- 00000000			.DATA?
- 00000000  000003E8 [		A	BYTE	n DUP(?)
-	    00
-	   ]
+				GCD PROTO	x:SDWORD, y:SDWORD
+				abs PROTO, x:PTR SDWORD
 
  00000000			.CODE
  00000000			main PROC
- 00000000  BF 00000002 R		mov	edi,OFFSET A + 2	; initial index = 2
- 00000005  B9 000003E6			mov	ecx,n - 2
- 0000000A  B8 00000001			mov	eax,1
- 0000000F  F3/ AA			rep	stosb
- 00000011  66| C7 05			mov	WORD PTR [A],FALSE	; set 0 & 1 to FALSE
-	   00000000 R
-	   0000
- 0000001A  BE 00000001			mov	esi,1			; initial value = 2, inc at start of loop
- 0000001F			OuterLoop:
- 0000001F  46				inc	esi				; next value
- 00000020  83 FE 1F			cmp	esi,sqrt_n		; ESI > sqrt_n ?
- 00000023  77 21			ja	Display			; yes: done, display values
- 00000025  80 BE 00000000 R		cmp	A[esi],TRUE		; A[ESI] == true ?
-	   01
- 0000002C  75 F1			jne	OuterLoop			; no: continue loop
- 0000002E  8B FE			mov	edi,esi
- 00000030  0F AF FF			imul	edi,edi			; InnerLoop initial val = ESI^2
- 00000033			InnerLoop:
- 00000033  81 FF 000003E8		cmp	edi,n			; EDI > n ?
- 00000039  73 E4			jae	OuterLoop			; yes: continue outer loop
- 0000003B  C6 87 00000000 R		mov	A[edi],FALSE		; no: value is not prime
-	   00
- 00000042  03 FE			add	edi,esi			; EDI = ESI^2 + ESI, ESI^2 + 2 * ESI ...
- 00000044  EB ED			jmp	InnerLoop
- 00000046			Display:
- 00000046  BE 00000001			mov	esi,1			; initial value = 2, inc at start of loop
- 0000004B			DisplayPrimeNumbers:
- 0000004B  46				inc	esi
- 0000004C  81 FE 000003E8		cmp	esi,n				; ESI >= n ?
- 00000052  73 17			jae	Done					; yes: done
- 00000054  80 BE 00000000 R		cmp	BYTE PTR A[esi],TRUE	; A[ESI] == TRUE ?
-	   01
- 0000005B  75 EE			jne	DisplayPrimeNumbers		; no: value is not prime, continue loop
- 0000005D  8B C6			mov	eax,esi				; yes: value is prime, display it
- 0000005F  E8 00000000 E		call	WriteDec
- 00000064  E8 00000000 E		call	Crlf
- 00000069  EB E0			jmp	DisplayPrimeNumbers
- 0000006B			Done:
+					INVOKE GCD, 54, 24
+ 00000009  E8 00000000 E		call	WriteInt		; 6
+ 0000000E  E8 00000000 E		call	Crlf
+					INVOKE GCD, 42, 56
+ 0000001C  E8 00000000 E		call	WriteInt		; 14
+ 00000021  E8 00000000 E		call	Crlf
+					INVOKE GCD, 48, 180
+ 00000032  E8 00000000 E		call	WriteInt		; 12
+ 00000037  E8 00000000 E		call	Crlf
+					INVOKE GCD, -24, 54
+ 00000045  E8 00000000 E		call	WriteInt		; 6
+ 0000004A  E8 00000000 E		call	Crlf
 					exit
- 00000072			main ENDP
+ 00000056			main ENDP
+
+ 00000056			GCD PROC USES ebx edx,
+					x:SDWORD,
+					y:SDWORD
+					INVOKE abs, ADDR x	; x = abs(x)
+					INVOKE abs, ADDR y	; y = abs(y)
+
+ 0000006D			LoopStart:		; do {
+ 0000006D  BA 00000000			mov	edx,0
+ 00000072  8B 45 08			mov	eax,x
+ 00000075  8B 5D 0C			mov	ebx,y
+ 00000078  F7 F3			div	ebx		; EDX = x % y
+ 0000007A  89 5D 08			mov	x,ebx	; x = y
+ 0000007D  89 55 0C			mov	y,edx	; y = EDX
+ 00000080  83 7D 0C 00			cmp	y,0
+ 00000084  7E 02			jle	Done
+ 00000086  EB E5			jmp LoopStart	; } while (y > 0)
+ 00000088			Done:
+ 00000088  8B 45 08			mov	eax,x	; return the GCD in EAX
+					ret
+ 00000091			GCD ENDP
+
+				;-----------------------------------------------------
+ 00000091			abs PROC USES eax edx esi,
+					val:PTR SDWORD			; original value
+				;
+				; Calculates the absolute value of a 32-bit integer using
+				; abs(val) = (val XOR val2) - val2
+				; where val2 = val SAR 31.
+				; Returns: val = abs(val)
+				;-----------------------------------------------------
+ 00000097  8B 75 08			mov	esi,val
+ 0000009A  8B 06			mov	eax,[esi]	; [esi] is memory for val on stack
+ 0000009C  C1 F8 1F			sar	eax,31	; EAX = val2
+ 0000009F  8B D0			mov	edx,eax
+ 000000A1  33 16			xor	edx,[esi]	; EDX = val XOR val2
+ 000000A3  89 16			mov	[esi],edx	; [esi] is memory for output on stack
+ 000000A5  29 06			sub	[esi],eax	; (val XOR val2) - val2
+					ret
+ 000000AE			abs ENDP
 				END main
-Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/25/18 15:48:04
-Prime Number						     Symbols 2 - 1
+Microsoft (R) Macro Assembler Version 14.14.26428.1	    06/25/18 17:14:31
+Greatest Common Diviso					     Symbols 2 - 1
 
 
 
@@ -171,9 +177,8 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_BSS . . . . . . . . . . . . . .	32 Bit	 000003E8 Para	  Public  'BSS'  
 _DATA  . . . . . . . . . . . . .	32 Bit	 00000000 Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 00000072 Para	  Public  'CODE'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 000000AE Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
@@ -194,6 +199,11 @@ FileTimeToDosDateTime  . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 FileTimeToSystemTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FlushConsoleInputBuffer  . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 FormatMessageA . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GCD  . . . . . . . . . . . . . .	P Near	 00000056 _TEXT	Length= 0000003B Public STDCALL
+  x  . . . . . . . . . . . . . .	DWord	 bp + 00000008
+  y  . . . . . . . . . . . . . .	DWord	 bp + 0000000C
+  LoopStart  . . . . . . . . . .	L Near	 0000006D _TEXT	
+  Done . . . . . . . . . . . . .	L Near	 00000088 _TEXT	
 GetCommandLineA  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetCommandTail . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetConsoleCP . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -280,12 +290,9 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000072 Public STDCALL
-  OuterLoop  . . . . . . . . . .	L Near	 0000001F _TEXT	
-  InnerLoop  . . . . . . . . . .	L Near	 00000033 _TEXT	
-  Display  . . . . . . . . . . .	L Near	 00000046 _TEXT	
-  DisplayPrimeNumbers  . . . . .	L Near	 0000004B _TEXT	
-  Done . . . . . . . . . . . . .	L Near	 0000006B _TEXT	
+abs  . . . . . . . . . . . . . .	P Near	 00000091 _TEXT	Length= 0000001D Public STDCALL
+  val  . . . . . . . . . . . . .	DWord	 bp + 00000008
+main . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000056 Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -305,7 +312,6 @@ Symbols:
 @fardata . . . . . . . . . . . .	Text   	 FLAT
 @stack . . . . . . . . . . . . .	Text   	 FLAT
 ALT_MASK . . . . . . . . . . . .	Number	 00000003h   
-A  . . . . . . . . . . . . . . .	Byte	 00000000 _BSS	
 CAPSLOCK_ON  . . . . . . . . . .	Number	 00000080h   
 CREATE_ALWAYS  . . . . . . . . .	Number	 00000002h   
 CREATE_NEW . . . . . . . . . . .	Number	 00000001h   
@@ -519,9 +525,7 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-n  . . . . . . . . . . . . . . .	Number	 000003E8h   
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-sqrt_n . . . . . . . . . . . . .	Number	 0000001Fh   
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
