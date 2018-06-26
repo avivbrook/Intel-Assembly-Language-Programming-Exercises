@@ -165,6 +165,9 @@
     <MASM Include="7_6_GCD.asm">
       <Filter>Chapter7</Filter>
     </MASM>
+    <MASM Include="7_7_BitwiseMultiplication.asm">
+      <Filter>Chapter7</Filter>
+    </MASM>
   </ItemGroup>
   <ItemGroup>
     <None Include="largest.inc">
