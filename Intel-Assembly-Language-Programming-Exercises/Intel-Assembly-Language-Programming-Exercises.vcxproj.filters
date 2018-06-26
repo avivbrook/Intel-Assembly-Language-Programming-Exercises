@@ -22,11 +22,14 @@
     <Filter Include="Chapter8\2. Chess Board">
       <UniqueIdentifier>{0b56d321-2cd7-466f-86ff-69ed08858a31}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Chapter8\FindThrees">
-      <UniqueIdentifier>{286e86e1-2212-4d7f-ae9f-2b5fc6777769}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Chapter8\1. FindLargest">
       <UniqueIdentifier>{4f7c7dff-40f3-4d39-850c-cb1670e3f306}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter8\4. FindThrees">
+      <UniqueIdentifier>{286e86e1-2212-4d7f-ae9f-2b5fc6777769}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Chapter8\5. DifferentInputs">
+      <UniqueIdentifier>{02774db5-02b7-423d-bbce-88d68e109aa3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -148,10 +151,10 @@
       <Filter>Chapter8\2. Chess Board</Filter>
     </MASM>
     <MASM Include="_findthrees.asm">
-      <Filter>Chapter8\FindThrees</Filter>
+      <Filter>Chapter8\4. FindThrees</Filter>
     </MASM>
     <MASM Include="Threes_main.asm">
-      <Filter>Chapter8\FindThrees</Filter>
+      <Filter>Chapter8\4. FindThrees</Filter>
     </MASM>
     <MASM Include="6_10_ParityChecking.asm">
       <Filter>Chapter6</Filter>
@@ -168,6 +171,12 @@
     <MASM Include="7_7_BitwiseMultiplication.asm">
       <Filter>Chapter7</Filter>
     </MASM>
+    <MASM Include="_differentinputs.asm">
+      <Filter>Chapter8\5. DifferentInputs</Filter>
+    </MASM>
+    <MASM Include="Inputs_main.asm">
+      <Filter>Chapter8\5. DifferentInputs</Filter>
+    </MASM>
   </ItemGroup>
   <ItemGroup>
     <None Include="largest.inc">
@@ -177,7 +186,10 @@
       <Filter>Chapter8\2. Chess Board</Filter>
     </None>
     <None Include="threes.inc">
-      <Filter>Chapter8\FindThrees</Filter>
+      <Filter>Chapter8\4. FindThrees</Filter>
+    </None>
+    <None Include="inputs.inc">
+      <Filter>Chapter8\5. DifferentInputs</Filter>
     </None>
   </ItemGroup>
 </Project>
